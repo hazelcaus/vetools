@@ -1,0 +1,15 @@
+.next
+.git
+yarn.lock
+package-lock.json
+node_modules
+migrations/
+.vercel
+*.dbg.json
+*DS_Store
+build-info
+contracts/typechain
+src/constants/artifacts/**
+src/constants/abis/**
+.vscode
+out

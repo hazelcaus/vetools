@@ -1,0 +1,103 @@
+{
+    "name": "vetools",
+    "displayName": "VeTools - VSCode Toolkit for VeChain",
+    "description": "",
+    "author": "magnusekstrom",
+    "publisher": "magnusekstrom",
+    "version": "1.0.0",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "repository": {
+        "url": "https://github.com/hazelcaus/vetools"
+    },
+    "keywords": [
+        "vechain",
+        "toolkit",
+        "blockchain",
+        "solidity"
+    ],
+    "main": "./out/src/extension.js",
+    "activationEvents": [
+        "onStartupFinished",
+        "onCommand:vetools.newProject",
+        "onDebug"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "vetools.newProject",
+                "title": "New Project",
+                "category": "VeTools"
+            }
+        ],
+        "breakpoints": [
+            {
+                "language": "solidity"
+            },
+            {
+                "language": "sol"
+            }
+        ]
+    },
+    "scripts": {
+        "package": "vsce package",
+        "publish": "vsce publish",
+        "vscode:prepublish": "yarn webpack:prod",
+        "compile": "npm cache clean -f && yarn clean && tsc -p ./",
+        "compile:webpack": "yarn clean && tsc -p ./ && yarn webpack:dev",
+        "webpack:prod": "webpack --config webpack.prod.js",
+        "watch:webpack": "webpack --watch --config webpack.dev.js",
+        "copyFiles": "copyfiles -V -f ./src/debugAdapter/web3ProviderResolver.js ./src/helpers/checkTruffleConfigTemplate.js ./out/src/ ",
+        "watch:tsc": "npm cache clean -f && yarn clean && tsc-watch --onCompilationComplete \"yarn copyFiles\" ",
+        "watch": "yarn watch:tsc",
+        "clean": "rm -rf ./out/*",
+        "p": "yarn prettier --write .",
+        "[": "yarn prettier --write ."
+    },
+    "devDependencies": {
+        "@types/estree": "^0.0.39",
+        "@types/fs-extra": "^7.0.0",
+        "@types/glob": "^7.1.1",
+        "@types/lodash": "4.14.178",
+        "@types/request": "^2.48.1",
+        "@types/request-promise": "^4.1.44",
+        "@types/semver": "^6.0.0",
+        "@types/uuid": "^3.4.4",
+        "@types/vscode": "1.39.0",
+        "copyfiles": "^2.4.1",
+        "glob": "^7.1.4",
+        "sinon": "^7.3.2",
+        "ts-loader": "7.0.2",
+        "tsc-watch": "^4.5.0",
+        "typescript": "3.8.3",
+        "vscode-debugadapter": "^1.33.0",
+        "vscode-debugprotocol": "^1.33.0",
+        "webpack": "5.64.4",
+        "webpack-cli": "^4.9.2",
+        "webpack-merge": "^5.8.0",
+        "prettier": "^2.8.4"
+    },
+    "dependencies": {
+        "@truffle/codec": "^0.12.8",
+        "@truffle/compile-solidity": "^6.0.8",
+        "@truffle/debugger": "^10.0.5",
+        "abi-decoder": "^2.4.0",
+        "acorn": "^6.1.1",
+        "acorn-walk": "^6.1.1",
+        "astring": "^1.7.5",
+        "bip39": "^3.0.1",
+        "download": "^7.1.0",
+        "fs-extra": "^7.0.1",
+        "hdkey": "^1.1.1",
+        "ms-rest": "^2.5.0",
+        "open": "^6.4.0",
+        "request": "^2.88.0",
+        "request-promise": "^4.2.4",
+        "semver": "^6.0.0",
+        "uuid": "^3.3.2",
+        "vsce": "2.15.0",
+        "web3": "^1.7.3"
+    }
+}
