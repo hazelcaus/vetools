@@ -10,6 +10,7 @@ test.js
 truffle-config.js 
 package-old.json 
 *.vsix
+*.DS_Store
 
 ### Node template
 package-lock.json
