@@ -32,7 +32,7 @@ To follow:
 
 Following this directory structure, you can compile your smart contract(s) with ease.
 
-![alt text](https://media.giphy.com/media/uIrb49Y9Zyp4TrrLk2/giphy.gif "2. Compile your contracts")
+![alt text](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/one.gif "2. Compile your contracts")
 
 To follow:
 1. `Ctrl/Cmd + Shift + P` to open VSCode's Command Palette
