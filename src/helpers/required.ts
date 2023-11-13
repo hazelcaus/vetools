@@ -38,9 +38,9 @@ export namespace required {
 
     export async function install_dependencies(should_check_hardhat: boolean = false) {
         await show_ignorable_notification("Setting up a few things. One moment...", async () => {
-            if (!(await check_apps(RequiredApps.npm))) {
-                throw new Error(`You don't have npm installed. Please install before continuing`)
-            }
+            // if (!(await check_apps(RequiredApps.npm))) {
+            //     throw new Error(`You don't have npm installed. Please install before continuing`)
+            // }
 
             if (!(await check_apps(RequiredApps.node))) {
                 throw new Error("You don't have node.js installed. Please install it before continuing")
