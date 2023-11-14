@@ -1,3 +1,6 @@
+// More information about schema see here
+// https://github.com/trufflesuite/truffle-contract-schema
+
 export class Contract {
     public readonly abi: Array<{ [key: string]: any }>
     public readonly ast: { [key: string]: any }
@@ -11,6 +14,8 @@ export class Contract {
     public readonly source: string
     public readonly sourcePath: string
     public readonly updatedAt: string
+
+    // This keys were ignored sourceMap, deployedSourceMap, legacyAST, devdoc, userdoc
 
     constructor(contract: { [key: string]: any }) {
         this.abi = contract.abi

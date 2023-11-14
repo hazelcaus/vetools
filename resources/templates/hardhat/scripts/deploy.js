@@ -10,6 +10,7 @@ async function main() {
 
     // Get deployed contract
     const deployedToken = await hre.thor.getContractAt("Token", token.address)
+    
     // Now call any of the contract functions you'd like to call using `deployedToken`
 }
 

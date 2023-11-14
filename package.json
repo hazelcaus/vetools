@@ -4,7 +4,7 @@
     "description": "",
     "author": "magnusekstrom",
     "publisher": "magnusekstrom",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "license": "MIT",
     "engines": {
         "vscode": "^1.63.0"
@@ -22,6 +22,7 @@
     "activationEvents": [
         "onStartupFinished",
         "onCommand:vetools.newProject",
+        "onCommand:vetools.buildContracts",
         "onDebug"
     ],
     "contributes": {
@@ -29,6 +30,11 @@
             {
                 "command": "vetools.newProject",
                 "title": "New Project",
+                "category": "VeTools"
+            },
+            {
+                "command": "vetools.buildContracts",
+                "title": "Compile Contracts",
                 "category": "VeTools"
             }
         ],
@@ -39,7 +45,16 @@
             {
                 "language": "sol"
             }
-        ]
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "when": "resourceLangId == solidity",
+                    "command": "vetools.buildContracts",
+                    "group": "8_buildContractGroup"
+                }
+            ]
+        }
     },
     "scripts": {
         "package": "vsce package",

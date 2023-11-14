@@ -1,5 +1,5 @@
 import { commands, ExtensionContext, window } from "vscode"
-import { ProjectCommands } from "./commands"
+import { ProjectCommands, sdkCoreCommands } from "./commands"
 import { CommandContext, isWorkspaceOpen, required, setCommandContext } from "./helpers"
 import { MnemonicRepository } from "./services"
 import { Constants } from "./Constants"
@@ -8,6 +8,7 @@ import { Output } from "./Output"
 export async function activate(context: ExtensionContext) {
     Constants.initialize(context)
     MnemonicRepository.initialize(context.globalState)
+    await sdkCoreCommands.initialize(context.globalState)
 
     await required.install_dependencies()
 
@@ -19,7 +20,11 @@ export async function activate(context: ExtensionContext) {
         await try_execute(() => ProjectCommands.new_project())
     })
 
-    const subscriptions = [new_project]
+    const buildContracts = commands.registerCommand("vetools.buildContracts", async () => {
+        await try_execute(() => sdkCoreCommands.build())
+    })
+
+    const subscriptions = [new_project, buildContracts]
     context.subscriptions.push(...subscriptions)
 }
 

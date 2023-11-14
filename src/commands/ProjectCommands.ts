@@ -57,14 +57,14 @@ async function create_project(project_path: string): Promise<void> {
         }
     })
 
-    await show_ignorable_notification("Project created!", async () => {
+    await show_ignorable_notification("Project created! Installing local dependencies...", async () => {
         try {
             // npm install
             await outputCommandHelper.execute(project_path, "npm", "install")
         } catch (err) {
             Output.output_line("vetools", `'npm install' failed. Skipping.... Error: ${err}`)
             await show_ignorable_notification(
-                "Failed to install dependencies. Try manually by running `npm install` or `yarn install` in the root of the newly created directory",
+                "Failed to install dependencies. Try manually by running `npm i` or `yarn` in the root of the newly created directory",
                 async () => {
                     await new Promise((resolve) => setTimeout(resolve, 5000))
                 }

@@ -1,3 +1,5 @@
+export * from "./contract/ContractService"
+export * from "./HttpService"
 export * from "./NetworkService"
 export * from "./MnemonicRepository"
-export * from "./HttpService"
+export * from "./server/ServerService"
