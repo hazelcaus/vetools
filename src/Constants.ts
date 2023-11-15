@@ -108,11 +108,11 @@ export class Constants {
             min: "1.0.17",
         },
         [RequiredApps.node]: {
-            max: "17.0.0",
+            max: "20.9.0",
             min: "14.0.0",
         },
         [RequiredApps.npm]: {
-            max: "9.0.0",
+            max: "10.1.0",
             min: "6.14.15",
         },
         [RequiredApps.truffle]: {
