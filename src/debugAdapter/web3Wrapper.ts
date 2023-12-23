@@ -9,17 +9,17 @@ export class Web3Wrapper extends Web3 {
     private _cachedProvider: any
 
     public constructor(options?: any) {
-        let network_options
-        if (!options) {
+        let network_options = options
+        if (!options)
             network_options = {
                 network_id: "*",
                 host: Constants.default_host,
                 port: +Constants.default_port,
             }
-        } else {
-            network_options = options
-        }
-        const innerProvider = getWeb3InnerProvider(network_options)
+
+            console.log("Network options:", {network_options})
+
+            const innerProvider = getWeb3InnerProvider(network_options)
         super(innerProvider)
         this._options = network_options
     }

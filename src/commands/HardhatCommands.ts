@@ -84,26 +84,28 @@ export namespace HardhatCommands {
     async function deploy_to_network(network_type: string, workspace_root: string): Promise<void> {
         let network_name: string
         if (network_type === "mainnet" || network_type === "testnet") {
-            network_name = `thor_${network_type}`
+            network_name = `vechain_${network_type}`
         } else {
             network_name = "development" // development environment TODO
         }
 
         let should_proceed: boolean = true
-        if (network_name === "development") {
-            // Spin up a solo node instance
-            await show_ignorable_notification("Spinning up local Thor Solo Node", async () => {
-                try {
-                    await outputCommandHelper.execute(workspace_root, "bin/thor", "solo", "--on-demand")
-                } catch (err) {
-                    should_proceed = false
-                    const msg =
-                        "Couldn't spin up local Thor node. Did you follow the installation requirements correctly? Is `bin/thor` accessible via your terminal?"
-                    Output.output_line(Constants.outputChannel.truffleForVSCode, (err as Error).toString())
-                    throw new Error(msg)
-                }
-            })
-        }
+        // if (network_name === "development") {
+        //     // Spin up a solo node instance
+        //     await show_ignorable_notification("Spinning up local VeChain Node", async () => {
+        //         try {
+        //             await outputCommandHelper.execute(
+        //                 "/Users/sluzhba/Documents/dev/thor", // workspace_root, 
+        //                 "bin/thor", "solo", "--on-demand")
+        //         } catch (err) {
+        //             should_proceed = false
+        //             const msg =
+        //                 "Couldn't spin up local Thor node. Did you follow the installation requirements correctly? Is `bin/thor` accessible via your terminal?"
+        //             Output.output_line(Constants.outputChannel.truffleForVSCode, (err as Error).toString())
+        //             throw new Error(msg)
+        //         }
+        //     })
+        // }
 
         const capitalized = network_type.charAt(0).toUpperCase() + network_type.slice(1)
         if (should_proceed) {

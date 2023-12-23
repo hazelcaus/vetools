@@ -18,8 +18,6 @@ export async function activate(context: ExtensionContext) {
     setCommandContext(CommandContext.Enabled, true)
     setCommandContext(CommandContext.IsWorkspaceOpen, isWorkspaceOpen())
 
-    console.debug("ACTIVATING YES: 3.2.3")
-
     const refresh = commands.registerCommand("vetools.refresh", (element) => {
         TreeService.refresh(element)
     })

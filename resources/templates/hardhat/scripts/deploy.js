@@ -1,15 +1,16 @@
 const hre = require("hardhat")
 
 async function main() {
-    // For Thor
-    const Token = await hre.thor.getContractFactory("Token")
+    // const [deployer] = await ethers.getSigners()
+
+    const Token = await hre.ethers.getContractFactory("Token")
     const token = await Token.deploy()
     await token.deployed()
 
     console.log("Token deployed to address:", token.address)
 
     // Get deployed contract
-    const deployedToken = await hre.thor.getContractAt("Token", token.address)
+    const deployedToken = await hre.ethers.getContractAt("Token", token.address)
 
     // Now call any of the contract functions you'd like to call using `deployedToken`
 }
