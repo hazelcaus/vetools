@@ -4,7 +4,6 @@ import { Uri, workspace } from "vscode"
 import { Constants } from "../Constants"
 import { required, outputCommandHelper, get_workspace_root } from "../helpers"
 import { copy_folders, show_ignorable_notification, show_open_folder_dialog } from "../utils/utils"
-import { Output } from "../Output"
 
 export namespace ProjectCommands {
     export async function new_project(): Promise<void> {
@@ -41,7 +40,7 @@ async function choose_new_project_dir(): Promise<string> {
 }
 
 async function create_project(project_path: string): Promise<void> {
-    await show_ignorable_notification("Creating new Vetools project", async () => {
+    await show_ignorable_notification("Creating new VeTools project", async () => {
         try {
             const from = path.join(Constants.templates_directory, "hardhat")
             copy_folders(from, project_path)
@@ -57,17 +56,13 @@ async function create_project(project_path: string): Promise<void> {
         }
     })
 
-    await show_ignorable_notification("Project created! Installing local dependencies...", async () => {
+    await show_ignorable_notification("Installing dependencies", async () => {
         try {
             // npm install
-            await outputCommandHelper.execute(project_path, "npm", "install")
+            await outputCommandHelper.execute(project_path, "npm", "install -f")
         } catch (err) {
-            Output.output_line("vetools", `'npm install' failed. Skipping.... Error: ${err}`)
-            await show_ignorable_notification(
-                "Failed to install dependencies. Try manually by running `npm i` or `yarn` in the root of the newly created directory",
-                async () => {
-                    await new Promise((resolve) => setTimeout(resolve, 5000))
-                }
+            throw new Error(
+                `Failed to set up dependencies. Do you have npm configured correctly? ${(err as Error).message}`
             )
         }
     })

@@ -11,6 +11,7 @@ truffle-config.js
 package-old.json 
 *.vsix
 *.DS_Store
+temp
 
 ### Node template
 package-lock.json
@@ -24,7 +25,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Dependency directories
-node_modules/**
+node_modules
 jspm_packages/
 
 # dotenv environment variables file

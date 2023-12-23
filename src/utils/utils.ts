@@ -2,12 +2,14 @@ import fs from "fs-extra"
 import path from "path"
 import { InputBoxOptions, ProgressLocation, QuickPickItem, QuickPickOptions, Uri, window, workspace } from "vscode"
 import { Constants, NotificationOptions } from "../Constants"
+import { CancellationEvent } from "../Models"
+import { DialogResultValidator } from "../validators/DialogResultValidator"
 
 export async function showInputBox(options: InputBoxOptions): Promise<string> {
     const result = await window.showInputBox(options)
 
     if (result === undefined) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 
     return result
@@ -20,7 +22,7 @@ export async function showQuickPickMany<T extends QuickPickItem>(
     const result = await window.showQuickPick(items, options)
 
     if (result === undefined) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 
     return result
@@ -33,25 +35,21 @@ export async function showQuickPick<T extends QuickPickItem>(
     const result = await window.showQuickPick(items, options)
 
     if (result === undefined) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 
     return result
-}
-
-const temp = () => {
-    console.debug("HELLO INSIDE showConfirmPaidOperationDialog")
 }
 
 export async function showConfirmPaidOperationDialog() {
     const answer = await showInputBox({
         ignoreFocusOut: true,
         prompt: Constants.placeholders.confirmPaidOperation,
-        validateInput: temp as any, // DialogResultValidator.validateConfirmationResult,
+        validateInput: DialogResultValidator.validateConfirmationResult,
     })
 
     if (answer.toLowerCase() !== Constants.confirmationDialogResult.yes.toLowerCase()) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 }
 
@@ -94,7 +92,7 @@ export async function show_open_folder_dialog(): Promise<string> {
     })
 
     if (!folder) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 
     return folder[0].fsPath
@@ -108,7 +106,7 @@ export async function showOpenFileDialog(): Promise<string> {
     })
 
     if (!folder) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 
     return folder.fsPath
@@ -125,7 +123,7 @@ export async function saveTextInFile(
     })
 
     if (!file) {
-        throw new Error()
+        throw new CancellationEvent()
     }
 
     fs.writeFileSync(file.fsPath, text)
@@ -199,7 +197,7 @@ export function hardhat_to_truffle(hardhat_folder: string, truffle_folder: strin
     const hardhat_contracts_folder = path.join(hardhat_folder, "contracts")
     if (!fs.existsSync(hardhat_contracts_folder)) {
         throw new Error(
-            "Please write all your smart contracts within the `contracts` folder. This is a temporary inconvenience which will be fixed in the upcoming versions of Vetools."
+            "Please write all your smart contracts within the `contracts` folder. This is a temporary inconvenience which will be fixed in the upcoming versions of VeTools."
         )
     }
 

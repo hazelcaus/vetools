@@ -23,6 +23,10 @@ class SdkCoreCommands {
         return this.extension_adapter.build()
     }
 
+    public async deploy(): Promise<void> {
+        return this.extension_adapter.deploy()
+    }
+
     private getExtensionAdapter(): IExtensionAdapter {
         return new HardhatExtensionAdapter()
     }

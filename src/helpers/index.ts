@@ -2,10 +2,12 @@ import * as outputCommandHelper from "./command"
 import * as commandContext from "./commandContext"
 import { required } from "./required"
 import * as shell from "./shell"
+import * as telemetryHelper from "./telemetry"
 import { TruffleConfiguration } from "./truffleConfig"
 import * as userSettings from "./userSettings"
 import * as vscodeEnvironment from "./vscodeEnvironment"
 import * as workspaceHelpers from "./workspace"
+// export * from "./userInteraction";
 
 const spawnProcess = outputCommandHelper.spawnProcess
 const get_workspace_root = workspaceHelpers.get_workspace_root
@@ -23,6 +25,7 @@ export {
     setCommandContext,
     shell,
     spawnProcess,
+    telemetryHelper,
     TruffleConfig,
     TruffleConfiguration,
     userSettings,

@@ -10,6 +10,7 @@ module.exports = {
     target: "node",
     entry: {
         extension: "./src/extension.ts",
+        debugger: "./src/debugger.ts",
     },
     output: {
         path: path.join(__dirname, "out", "src"),

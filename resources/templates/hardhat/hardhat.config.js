@@ -1,12 +1,11 @@
-require("@nomiclabs/hardhat-waffle")
 require("@nomiclabs/hardhat-web3")
 require("@vechain/hardhat-web3")
 const {
     VECHAIN_URL_SOLO,
     VECHAIN_URL_TESTNET,
     VECHAIN_URL_MAINNET,
-    VECHAIN_DEFAULT_MNEMONIC
-  } = require("@vechain/hardhat-vechain")
+    VECHAIN_DEFAULT_MNEMONIC,
+} = require("@vechain/hardhat-vechain")
 
 module.exports = {
     solidity: "0.8.4",
@@ -25,8 +24,8 @@ module.exports = {
             mnemonic: [VECHAIN_DEFAULT_MNEMONIC],
             delegate: {
                 url: "${feeDelegationServiceUrl}",
-                signer: "${optionalSigner}"
-            }
+                signer: "${optionalSigner}",
+            },
         },
     },
 }

@@ -59,7 +59,6 @@ export async function try_execute(
     commands: string,
     ...args: string[]
 ): Promise<ICommandResult> {
-    Output.output_line("\ntry_execute ", `workingDirectory: ${workingDirectory}\ncommands: ${commands}\nargs: ${args}\n`)
     const { result } = await tryExecuteCommandAsync(workingDirectory, true, commands, ...args)
 
     return result

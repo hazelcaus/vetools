@@ -4,7 +4,7 @@
     "description": "",
     "author": "magnusekstrom",
     "publisher": "magnusekstrom",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "license": "MIT",
     "engines": {
         "vscode": "^1.63.0"
@@ -18,15 +18,54 @@
         "blockchain",
         "solidity"
     ],
+    "scripts": {
+        "package": "vsce package",
+        "publish": "vsce publish",
+        "vscode:prepublish": "yarn webpack:prod",
+        "compile": "npm cache clean -f && yarn clean && tsc -p ./",
+        "compile:webpack": "yarn clean && tsc -p ./ && yarn webpack:dev",
+        "webpack:prod": "webpack --config webpack.prod.js",
+        "watch:webpack": "webpack --watch --config webpack.dev.js",
+        "copyFiles": "copyfiles -V -f ./src/debugAdapter/web3ProviderResolver.js ./src/helpers/checkTruffleConfigTemplate.js ./out/src/ ",
+        "watch:tsc": "npm cache clean -f && yarn clean && tsc-watch --onCompilationComplete \"yarn copyFiles\" ",
+        "watch": "yarn watch:tsc",
+        "clean": "rm -rf ./out/*",
+        "p": "yarn prettier --write .",
+        "[": "yarn prettier --write ."
+    },
     "main": "./out/src/extension.js",
     "activationEvents": [
         "onStartupFinished",
         "onCommand:vetools.newProject",
         "onCommand:vetools.buildContracts",
+        "onCommand:vetools.deployContracts",
+        "onCommand:vetools.debug",
+        "onCommand:vetools.debugWorkspaceFolder",
+        "onCommand:vetools.getProviderUrl",
         "onDebug"
     ],
     "contributes": {
         "commands": [
+            {
+                "command": "vetools.newProject",
+                "title": "New Project",
+                "category": "Blockchain"
+            },
+            {
+                "command": "vetools.buildContracts",
+                "title": "Compile Contracts",
+                "category": "Blockchain"
+            },
+            {
+                "command": "vetools.deployContracts",
+                "title": "Deploy Contracts",
+                "category": "Blockchain"
+            },
+            {
+                "command": "vetools.debug",
+                "title": "Debug Smart Contracts",
+                "category": "Blockchain"
+            },
             {
                 "command": "vetools.newProject",
                 "title": "New Project",
@@ -35,6 +74,16 @@
             {
                 "command": "vetools.buildContracts",
                 "title": "Compile Contracts",
+                "category": "VeTools"
+            },
+            {
+                "command": "vetools.deployContracts",
+                "title": "Deploy Contracts",
+                "category": "VeTools"
+            },
+            {
+                "command": "vetools.debug",
+                "title": "Debug Smart Contracts",
                 "category": "VeTools"
             }
         ],
@@ -52,24 +101,96 @@
                     "when": "resourceLangId == solidity",
                     "command": "vetools.buildContracts",
                     "group": "8_buildContractGroup"
+                },
+                {
+                    "when": "resourceLangId == json",
+                    "command": "vetools.deployContracts",
+                    "group": "8_buildContractGroup"
+                },
+                {
+                    "when": "resourceLangId == solidity",
+                    "command": "vetools.deployContracts",
+                    "group": "8_buildContractGroup"
                 }
             ]
-        }
-    },
-    "scripts": {
-        "package": "vsce package",
-        "publish": "vsce publish",
-        "vscode:prepublish": "yarn webpack:prod",
-        "compile": "npm cache clean -f && yarn clean && tsc -p ./",
-        "compile:webpack": "yarn clean && tsc -p ./ && yarn webpack:dev",
-        "webpack:prod": "webpack --config webpack.prod.js",
-        "watch:webpack": "webpack --watch --config webpack.dev.js",
-        "copyFiles": "copyfiles -V -f ./src/debugAdapter/web3ProviderResolver.js ./src/helpers/checkTruffleConfigTemplate.js ./out/src/ ",
-        "watch:tsc": "npm cache clean -f && yarn clean && tsc-watch --onCompilationComplete \"yarn copyFiles\" ",
-        "watch": "yarn watch:tsc",
-        "clean": "rm -rf ./out/*",
-        "p": "yarn prettier --write .",
-        "[": "yarn prettier --write ."
+        },
+        "debuggers": [
+            {
+                "type": "thor",
+                "label": "VeTools - Debugger",
+                "program": "./out/src/debugger.js",
+                "runtime": "node",
+                "configurationAttributes": {
+                    "launch": {
+                        "required": [],
+                        "properties": {
+                            "stopOnEntry": {
+                                "type": "boolean",
+                                "description": "Automatically stop after launch.",
+                                "default": true
+                            },
+                            "trace": {
+                                "type": "boolean",
+                                "description": "Enable logging of the Debug Adapter Protocol.",
+                                "default": true
+                            },
+                            "txHash": {
+                                "type": "string",
+                                "description": "Transaction hash to debug",
+                                "default": "0x"
+                            },
+                            "files": {
+                                "type": "string[]",
+                                "description": "Array of file paths of solidity files to debug",
+                                "default": []
+                            },
+                            "workingDirectory": {
+                                "type": "string",
+                                "description": "Directory of project",
+                                "default": "${command:debugWorkspaceFolder}"
+                            },
+                            "providerUrl": {
+                                "type": "string",
+                                "description": "URL of provider",
+                                "default": "${command:get_provider_url}"
+                            }
+                        }
+                    }
+                },
+                "initialConfigurations": [
+                    {
+                        "type": "thor",
+                        "request": "launch",
+                        "name": "VeTools - Debug Smart Contracts",
+                        "stopOnEntry": false,
+                        "txHash": "0x",
+                        "files": [],
+                        "workingDirectory": "${command:debugWorkspaceFolder}",
+                        "providerUrl": "${command:get_provider_url}"
+                    }
+                ],
+                "configurationSnippets": [
+                    {
+                        "label": "VeTools - Debugger Launch",
+                        "description": "Runs the VeTools debugger",
+                        "body": {
+                            "type": "thor",
+                            "request": "launch",
+                            "name": "Debug Smart Contracts with VeTools",
+                            "stopOnEntry": false,
+                            "txHash": "0x",
+                            "files": [],
+                            "workingDirectory": "^\"\\${command:debugWorkspaceFolder}/",
+                            "providerUrl": "${command:get_provider_url}"
+                        }
+                    }
+                ],
+                "variables": {
+                    "debugWorkspaceFolder": "vetools.get_debugWorkspaceFolder",
+                    "provider_url": "vetools.get_provider_url"
+                }
+            }
+        ]
     },
     "devDependencies": {
         "@types/estree": "^0.0.39",
@@ -91,8 +212,8 @@
         "vscode-debugprotocol": "^1.33.0",
         "webpack": "5.64.4",
         "webpack-cli": "^4.9.2",
-        "webpack-merge": "^5.8.0",
-        "prettier": "^2.8.4"
+        "prettier": "^2.8.4",
+        "webpack-merge": "^5.8.0"
     },
     "dependencies": {
         "@truffle/codec": "^0.12.8",
@@ -114,5 +235,8 @@
         "uuid": "^3.3.2",
         "vsce": "2.15.0",
         "web3": "^1.7.3"
-    }
+    },
+    "extensionDependencies": [
+        "JuanBlanco.solidity"
+    ]
 }

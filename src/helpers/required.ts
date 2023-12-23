@@ -32,23 +32,23 @@ export namespace required {
             .filter((version) => apps.includes(version.app as RequiredApps))
             .some((version) => !version.isValid)
 
-        Output.output_line("check_apps", `Current state for versions: ${JSON.stringify(versions)} Invalid: ${invalid}`)
+        // Output.output_line("check_apps", `Current state for versions: ${JSON.stringify(versions)} Invalid: ${invalid}`)
         return !invalid
     }
 
     export async function install_dependencies(should_check_hardhat: boolean = false) {
         await show_ignorable_notification("Setting up a few things. One moment...", async () => {
-            // if (!(await check_apps(RequiredApps.npm))) {
-            //     throw new Error(`You don't have npm installed. Please install before continuing`)
-            // }
+            if (!(await check_apps(RequiredApps.npm))) {
+                throw new Error(`You don't have npm installed. Please install before continuing`)
+            }
 
             if (!(await check_apps(RequiredApps.node))) {
                 throw new Error("You don't have node.js installed. Please install it before continuing")
             }
 
-            // if (!(await check_apps(RequiredApps.truffle))) {
-            //     await install_truffle()
-            // }
+            if (!(await check_apps(RequiredApps.truffle))) {
+                await install_truffle()
+            }
 
             if (!(await check_apps(RequiredApps.ganache))) {
                 await install_ganache()
