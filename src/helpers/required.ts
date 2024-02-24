@@ -32,7 +32,7 @@ export namespace required {
             .filter((version) => apps.includes(version.app as RequiredApps))
             .some((version) => !version.isValid)
 
-        // Output.output_line("check_apps", `Current state for versions: ${JSON.stringify(versions)} Invalid: ${invalid}`)
+        Output.output_line("check_apps", `Current state for versions: ${JSON.stringify(versions)} Invalid: ${invalid}`)
         return !invalid
     }
 
