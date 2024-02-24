@@ -7,7 +7,7 @@
     "version": "1.0.6",
     "license": "MIT",
     "engines": {
-        "vscode": "^1.63.0"
+        "vscode": "^1.66.0"
     },
     "repository": {
         "url": "https://github.com/hazelcaus/vetools"

@@ -18,7 +18,7 @@ export namespace DebuggerCommands {
         try {
             web3 = new Web3Wrapper()
             provider_url = web3.getProviderUrl()
-            console.log("Web3 provider details:", {web3, provider_url})
+            console.log("Web3 provider details:", { web3, provider_url })
         } catch (err) {
             throw new Error("Have you deployed any contracts in this VSCode Session?")
         }

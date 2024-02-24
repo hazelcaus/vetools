@@ -95,7 +95,7 @@ export namespace HardhatCommands {
         //     await show_ignorable_notification("Spinning up local VeChain Node", async () => {
         //         try {
         //             await outputCommandHelper.execute(
-        //                 "/Users/sluzhba/Documents/dev/thor", // workspace_root, 
+        //                 "/Users/sluzhba/Documents/dev/thor", // workspace_root,
         //                 "bin/thor", "solo", "--on-demand")
         //         } catch (err) {
         //             should_proceed = false

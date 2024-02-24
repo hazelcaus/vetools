@@ -6,6 +6,7 @@ import { Constants } from "./Constants"
 import { CancellationEvent } from "./Models"
 import { Output } from "./Output"
 import { DebuggerConfiguration } from "./debugAdapter/configuration/debuggerConfiguration"
+import nodeStatus from "./statusBar/nodeStatus"
 
 export async function activate(context: ExtensionContext) {
     Constants.initialize(context)
@@ -54,6 +55,9 @@ export async function activate(context: ExtensionContext) {
         get_provider_url,
     ]
     context.subscriptions.push(...subscriptions)
+
+    // Start a recurring task to keep local node status updated
+    setInterval(nodeStatus, 1000)
 }
 
 export async function deactivate(): Promise<void> {

@@ -17,9 +17,9 @@ export class Web3Wrapper extends Web3 {
                 port: +Constants.default_port,
             }
 
-            console.log("Network options:", {network_options})
+        console.log("Network options:", { network_options })
 
-            const innerProvider = getWeb3InnerProvider(network_options)
+        const innerProvider = getWeb3InnerProvider(network_options)
         super(innerProvider)
         this._options = network_options
     }
