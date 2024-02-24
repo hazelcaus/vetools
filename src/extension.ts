@@ -1,5 +1,5 @@
 import { commands, ExtensionContext, window } from "vscode"
-import { DebuggerCommands, GanacheCommands, ProjectCommands, sdkCoreCommands, HardhatCommands } from "./commands"
+import { DebuggerCommands, GanacheCommands, ProjectCommands, sdkCoreCommands, HardhatCommands, statusBarCommands } from "./commands"
 import { CommandContext, isWorkspaceOpen, required, setCommandContext } from "./helpers"
 import { GanacheService, MnemonicRepository, TreeService } from "./services"
 import { Constants } from "./Constants"
@@ -13,6 +13,7 @@ export async function activate(context: ExtensionContext) {
     DebuggerConfiguration.initialize(context)
     MnemonicRepository.initialize(context.globalState)
     await sdkCoreCommands.initialize(context.globalState)
+    await statusBarCommands.initialize(context.globalState)
 
     await required.install_dependencies()
 
@@ -33,6 +34,12 @@ export async function activate(context: ExtensionContext) {
     const deployContracts = commands.registerCommand("vetools.deployContracts", async () => {
         await try_execute(() => sdkCoreCommands.deploy())
     })
+    const startLocalNode = commands.registerCommand("vetools.startLocalNode", async () => {
+        await try_execute(() => statusBarCommands.startLocalNode())
+    })
+    const stopLocalNode = commands.registerCommand("vetools.stopLocalNode", async () => {
+        await try_execute(() => statusBarCommands.stopLocalNode())
+    })
     const get_debug_workspace_folder = commands.registerCommand("vetools.debugWorkspaceFolder", () => {
         return Constants.truffle_temp_dir
     })
@@ -50,6 +57,8 @@ export async function activate(context: ExtensionContext) {
         new_project,
         buildContracts,
         deployContracts,
+        startLocalNode,
+        stopLocalNode,
         start_debugger,
         get_debug_workspace_folder,
         get_provider_url,

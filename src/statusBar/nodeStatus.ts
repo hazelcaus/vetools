@@ -1,33 +1,33 @@
 import { exec } from "child_process"
 import { StatusBarAlignment, StatusBarItem, ThemeColor, window } from "vscode"
 
-let fuelCoreStatus: StatusBarItem
-let isFuelCoreRunning: boolean
+let nodeStatus: StatusBarItem
+let isNodeRunning: boolean
 
 export const getNodeStatus = () => {
-    if (!fuelCoreStatus) {
-        fuelCoreStatus = window.createStatusBarItem(StatusBarAlignment.Left, 100)
+    if (!nodeStatus) {
+        nodeStatus = window.createStatusBarItem(StatusBarAlignment.Left, 100)
     }
-    return fuelCoreStatus
+    return nodeStatus
 }
 
 export default function updateNodeStatus() {
-    const initializedItem = getNodeStatus()
-    exec(`ps aux | grep -i fuel-cor`, (_error, stdout, _stderr) => {
-        isFuelCoreRunning = stdout.includes("fuel-core")
+    const initializedItem = getNodeStatus() as any
+    exec(`ps aux | grep -i ganache`, (_error, stdout, _stderr) => {
+        isNodeRunning = stdout.includes("ganache-cli")
     })
 
-    if (isFuelCoreRunning) {
+    if (isNodeRunning) {
         initializedItem.text = "$(symbol-event) local node running"
-        initializedItem.command = "sway.stopFuelCore"
-        initializedItem.tooltip = "Stop the locally running fuel-core server"
+        initializedItem.command = "vetools.stopLocalNode"
+        initializedItem.tooltip = "Stop the locally running node server"
         // Using any string other than the approved theme colors will reset the background to default.
         initializedItem.backgroundColor = new ThemeColor("reset")
         initializedItem.show()
     } else {
         initializedItem.text = "$(symbol-event) local node stopped"
-        initializedItem.command = "sway.startFuelCore"
-        initializedItem.tooltip = "Start fuel-core server at 127.0.0.1:4000"
+        initializedItem.command = "vetools.startLocalNode"
+        initializedItem.tooltip = "Start a local node at 127.0.0.1:8545"
         initializedItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground")
         initializedItem.show()
     }

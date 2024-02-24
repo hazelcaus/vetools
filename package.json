@@ -39,6 +39,8 @@
         "onCommand:vetools.newProject",
         "onCommand:vetools.buildContracts",
         "onCommand:vetools.deployContracts",
+        "onCommand:vetools.startLocalNode",
+        "onCommand:vetools.startLocalNode",
         "onCommand:vetools.debug",
         "onCommand:vetools.debugWorkspaceFolder",
         "onCommand:vetools.getProviderUrl",
@@ -48,43 +50,27 @@
         "commands": [
             {
                 "command": "vetools.newProject",
-                "title": "New Project",
-                "category": "Blockchain"
+                "title": "New Project"
             },
             {
                 "command": "vetools.buildContracts",
-                "title": "Compile Contracts",
-                "category": "Blockchain"
+                "title": "Compile Contracts"
             },
             {
                 "command": "vetools.deployContracts",
-                "title": "Deploy Contracts",
-                "category": "Blockchain"
+                "title": "Deploy Contracts"
             },
             {
                 "command": "vetools.debug",
-                "title": "Debug Smart Contracts",
-                "category": "Blockchain"
+                "title": "Debug Smart Contracts"
             },
             {
-                "command": "vetools.newProject",
-                "title": "New Project",
-                "category": "VeTools"
+                "command": "vetools.startLocalNode",
+                "title": "Start Local Node"
             },
             {
-                "command": "vetools.buildContracts",
-                "title": "Compile Contracts",
-                "category": "VeTools"
-            },
-            {
-                "command": "vetools.deployContracts",
-                "title": "Deploy Contracts",
-                "category": "VeTools"
-            },
-            {
-                "command": "vetools.debug",
-                "title": "Debug Smart Contracts",
-                "category": "VeTools"
+                "command": "vetools.stopLocalNode",
+                "title": "Stop Local Node"
             }
         ],
         "breakpoints": [

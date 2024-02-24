@@ -15,10 +15,6 @@ class SdkCoreCommands {
         })
     }
 
-    /**
-     *    call build on an extension
-     * @param args an array of compile/build time args you want to pass to the task (optional)
-     */
     public async build(): Promise<void> {
         return this.extension_adapter.build()
     }
