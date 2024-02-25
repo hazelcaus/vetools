@@ -7,6 +7,7 @@ let isNodeRunning: boolean
 export const getNodeStatus = () => {
     if (!nodeStatus) {
         nodeStatus = window.createStatusBarItem(StatusBarAlignment.Left, 100)
+        console.log("Node status:", nodeStatus)
     }
     return nodeStatus
 }

@@ -23,6 +23,7 @@ export namespace GanacheService {
     }
 
     export async function getPortStatus(port: number | string): Promise<PortStatus> {
+        console.debug("Evaluating port:", port)
         if (!isNaN(await shell.findPid(port))) {
             if (await isGanacheServer(port)) {
                 return PortStatus.GANACHE

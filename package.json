@@ -50,27 +50,27 @@
         "commands": [
             {
                 "command": "vetools.newProject",
-                "title": "New Project"
+                "title": "VeTools: New Project"
             },
             {
                 "command": "vetools.buildContracts",
-                "title": "Compile Contracts"
+                "title": "VeTools: Compile Contracts"
             },
             {
                 "command": "vetools.deployContracts",
-                "title": "Deploy Contracts"
+                "title": "VeTools: Deploy Contracts"
             },
             {
                 "command": "vetools.debug",
-                "title": "Debug Smart Contracts"
+                "title": "VeTools: Debug Smart Contracts"
             },
             {
                 "command": "vetools.startLocalNode",
-                "title": "Start Local Node"
+                "title": "VeTools: Start Local Node"
             },
             {
                 "command": "vetools.stopLocalNode",
-                "title": "Stop Local Node"
+                "title": "VeTools: Stop Local Node"
             }
         ],
         "breakpoints": [

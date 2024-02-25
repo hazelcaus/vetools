@@ -2,24 +2,29 @@
     "name": "vetools-solidity-project",
     "version": "1.0.0",
     "description": "",
-    "directories": {
-        "test": "test"
-    },
     "scripts": {
         "compile": "hardhat compile",
+        "deploy:dev": "hardhat run scripts/deploy.ts --network development",
+        "deploy:testnet": "hardhat run scripts/deploy.ts --network testnet",
+        "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
         "test": "hardhat test"
     },
     "dependencies": {
         "@openzeppelin/contracts": "^4.6.0",
         "@vechain/hardhat-vechain": "^0.1.7",
-        "@vechain/hardhat-web3": "^0.1.4"
+        "@vechain/hardhat-web3": "^0.1.4",
+        "solc": "0.8.23-fixed"
     },
     "devDependencies": {
+        "@types/node": "^14.14.28",
         "@nomiclabs/hardhat-ethers": "^2.0.2",
         "@nomiclabs/hardhat-waffle": "^2.0.1",
         "chai": "^4.2.0",
         "ethereum-waffle": "^3.1.1",
-        "ethers": "^5.0.0",
-        "hardhat": "^2.3.0"
+        "ethers": "^5.0.31",
+        "hardhat": "^2.0.10",
+        "ts-generator": "^0.1.1",
+        "ts-node": "^9.1.1",
+        "typescript": "^4.1.5"
     }
 }

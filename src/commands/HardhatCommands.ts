@@ -1,5 +1,5 @@
+import { exec } from "child_process"
 import { mnemonicToSeed } from "bip39"
-import fs from "fs-extra"
 // @ts-ignore
 import hdkey from "hdkey"
 import path from "path"
@@ -18,6 +18,8 @@ import { Output } from "../Output"
 import { MnemonicRepository } from "../services"
 
 import { GanacheCommands } from "./GanacheCommands"
+import { statusBarCommands } from "./StatusBarCommands"
+import { getNodeStatus } from "../statusBar/nodeStatus"
 
 interface IDeployDestinationItem {
     cmd: () => Promise<void>
@@ -38,7 +40,7 @@ export namespace HardhatCommands {
 
         await show_ignorable_notification("Compiling Contracts", async () => {
             try {
-                await outputCommandHelper.execute(get_workspace_root(), "npx", "hardhat", "compile")
+                await outputCommandHelper.execute(get_workspace_root(), "npm", "run", "compile")
             } catch (err) {
                 console.debug("Error:", (err as Error).toString())
             }
@@ -48,27 +50,26 @@ export namespace HardhatCommands {
     export async function deploy_contracts(): Promise<void> {
         const workspace_root = get_workspace_root()!
         await required.install_dependencies(true)
-        await GanacheCommands.start_ganache()
 
         const destinations = [
             {
                 cmd: deploy_to_network.bind(undefined, "development", workspace_root),
                 cwd: workspace_root,
-                label: "$(plus) Thor Local Node (experimental)",
+                label: "$(plus) Local Node (experimental)",
+                networkId: "*",
+            },
+            {
+                cmd: deploy_to_network.bind(undefined, "testnet", workspace_root),
+                cwd: workspace_root,
+                description: "Deploy to the Vechain Testnet",
+                label: "Vechain Testnet",
                 networkId: "*",
             },
             {
                 cmd: deploy_to_network.bind(undefined, "mainnet", workspace_root),
                 cwd: workspace_root,
                 description: "Experimental. Use at your own risk.",
-                label: "Thor Mainnet",
-                networkId: "*",
-            },
-            {
-                cmd: deploy_to_network.bind(undefined, "testnet", workspace_root),
-                cwd: workspace_root,
-                description: "Deploy to the Thor Testnet",
-                label: "Thor Testnet",
+                label: "Vechain Mainnet",
                 networkId: "*",
             },
         ]
@@ -87,6 +88,18 @@ export namespace HardhatCommands {
             network_name = `vechain_${network_type}`
         } else {
             network_name = "development" // development environment TODO
+        }
+
+        if (network_name === "development") {
+            const nodeStatus = getNodeStatus()
+
+            console.log("LOCAL NODE RUNNING?", nodeStatus.text)
+
+            const isLocalNodeRunning = nodeStatus.text.includes("running")
+            if (!isLocalNodeRunning) {
+                console.log("Starting local node...")
+                await statusBarCommands.startLocalNode()
+            }
         }
 
         let should_proceed: boolean = true
@@ -109,53 +122,55 @@ export namespace HardhatCommands {
 
         const capitalized = network_type.charAt(0).toUpperCase() + network_type.slice(1)
         if (should_proceed) {
-            await show_ignorable_notification(`Deploying contracts to ${capitalized}`, async () => {
+            await show_ignorable_notification(`Deploying contracts to ${capitalized} (${network_name})`, async () => {
                 try {
                     await required.install_dependencies()
                     await outputCommandHelper.execute(
                         workspace_root,
-                        "node",
-                        "scripts/deploy.js",
+                        "npx",
+                        "hardhat",
+                        "run",
+                        "scripts/deploy.ts",
                         "--network",
                         network_name
                     )
 
-                    // Now locally truffle migrate to local Ganache server
-                    // First copy folder contents to temp dir
-                    const tmp_dir = Constants.truffle_temp_dir
-                    const final_tmp_dir = path.join(Constants.truffle_temp_dir, "migrations")
-                    const truffle_config_file = path.join(Constants.templates_directory, "truffle", "truffle-config.js")
-                    const truffle_migrations_sol_file = path.join(
-                        Constants.templates_directory,
-                        "truffle",
-                        "Migrations.sol"
-                    )
-                    const truffle_migrations_folder = path.join(Constants.templates_directory, "truffle", "migrations")
+                    // // Now locally truffle migrate to local Ganache server
+                    // // First copy folder contents to temp dir
+                    // const tmp_dir = Constants.truffle_temp_dir
+                    // const final_tmp_dir = path.join(Constants.truffle_temp_dir, "migrations")
+                    // const truffle_config_file = path.join(Constants.templates_directory, "truffle", "truffle-config.js")
+                    // const truffle_migrations_sol_file = path.join(
+                    //     Constants.templates_directory,
+                    //     "truffle",
+                    //     "Migrations.sol"
+                    // )
+                    // const truffle_migrations_folder = path.join(Constants.templates_directory, "truffle", "migrations")
 
-                    copy_folders(get_workspace_root()!, tmp_dir, true)
-                    copy_folders(truffle_migrations_folder, final_tmp_dir, true)
-                    copy_file(truffle_config_file, path.join(tmp_dir, "truffle-config.js"))
-                    try {
-                        copy_file(truffle_migrations_sol_file, path.join(tmp_dir, "contracts", "Migrations.sol"))
-                    } catch (err) {
-                        throw new Error(
-                            "Please write all your smart contracts within the `contracts` folder. This is a temporary inconvenience which will be fixed in the upcoming versions of VeTools."
-                        )
-                    }
-                    hardhat_to_truffle(get_workspace_root()!, tmp_dir)
+                    // copy_folders(get_workspace_root()!, tmp_dir, true)
+                    // copy_folders(truffle_migrations_folder, final_tmp_dir, true)
+                    // copy_file(truffle_config_file, path.join(tmp_dir, "truffle-config.js"))
+                    // try {
+                    //     copy_file(truffle_migrations_sol_file, path.join(tmp_dir, "contracts", "Migrations.sol"))
+                    // } catch (err) {
+                    //     throw new Error(
+                    //         "Please write all your smart contracts within the `contracts` folder. This is a temporary inconvenience which will be fixed in the upcoming versions of VeTools."
+                    //     )
+                    // }
+                    // hardhat_to_truffle(get_workspace_root()!, tmp_dir)
 
-                    await outputCommandHelper.execute(
-                        tmp_dir,
-                        "truffle",
-                        "migrate",
-                        "--reset",
-                        "--compile-all",
-                        "--network",
-                        "development"
-                    )
+                    // await outputCommandHelper.execute(
+                    //     tmp_dir,
+                    //     "truffle",
+                    //     "migrate",
+                    //     "--reset",
+                    //     "--compile-all",
+                    //     "--network",
+                    //     "development"
+                    // )
                 } catch (err) {
                     const msg = `Deployment to ${network_name} failed`
-                    Output.output_line(Constants.outputChannel.truffleForVSCode, msg)
+                    Output.output_line("VeTools", msg)
                     throw err
                 }
             })

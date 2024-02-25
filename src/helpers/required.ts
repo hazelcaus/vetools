@@ -46,9 +46,9 @@ export namespace required {
                 throw new Error("You don't have node.js installed. Please install it before continuing")
             }
 
-            if (!(await check_apps(RequiredApps.truffle))) {
-                await install_truffle()
-            }
+            // if (!(await check_apps(RequiredApps.truffle))) {
+            //     await install_truffle()
+            // }
 
             if (!(await check_apps(RequiredApps.ganache))) {
                 await install_ganache()

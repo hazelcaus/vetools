@@ -1,5 +1,6 @@
+import { exec } from "child_process"
 import { Memento, window, Terminal } from "vscode"
-import * as vscode from 'vscode'
+import * as vscode from "vscode"
 import { IExtensionAdapter, HardhatExtensionAdapter } from "../services/extensionAdapter"
 import { get_workspace_root, outputCommandHelper } from "../helpers"
 
@@ -25,11 +26,19 @@ class StatusBarCommands {
         window.showInformationMessage(`Stopped local node`)
     }
 
-    private get(): vscode.Terminal {
-        const existing = vscode.window.terminals.find(t => t.name === this.type);
-        return existing ?? vscode.window.createTerminal(this.type);
+    public isLocalNodeRunning(): boolean {
+        let isNodeRunning: boolean = false
+        exec(`ps aux | grep -i ganache`, (_error, stdout, _stderr) => {
+            isNodeRunning = stdout.includes("ganache-cli")
+        })
+
+        return isNodeRunning
     }
 
+    private get(): vscode.Terminal {
+        const existing = vscode.window.terminals.find((t) => t.name === this.type)
+        return existing ?? vscode.window.createTerminal(this.type)
+    }
 }
 
 export const statusBarCommands = new StatusBarCommands()
