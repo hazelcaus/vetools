@@ -10,6 +10,14 @@ import IoHelpers from "../utils/ioHelpers"
 import posixPath from "../utils/posixPath"
 import { Wallet } from "ethers"
 
+export type WalletJson = {
+    name: string
+    address: string
+    publicKey: string
+    privateKey: string
+    encryptedPrivateKey: string
+}
+
 export namespace ProjectCommands {
     export async function newProject() {
         await required.installDependencies()
@@ -22,7 +30,7 @@ export namespace ProjectCommands {
     export async function createWallet() {
         const rootFolder = getWorkspaceRoot()
         if (!rootFolder) {
-            vscode.window.showErrorMessage(
+            await vscode.window.showErrorMessage(
                 "Please open a folder in your Visual Studio Code workspace before creating a wallet"
             )
             return
@@ -52,17 +60,6 @@ export namespace ProjectCommands {
         // Encrypt the private key
         const encryptedPrivateKey = xorEncrypt(privateKey, password)
 
-        const walletJson = JSON.stringify(
-            {
-                name: walletName,
-                publicKey: wallet.publicKey,
-                privateKey: wallet.privateKey,
-                encryptedPrivateKey,
-            },
-            null,
-            4
-        )
-
         // trying to decrypt the private key to make sure it's correct
         const decryptedPrivateKey = xorDecrypt(encryptedPrivateKey, password)
         if (decryptedPrivateKey !== privateKey) {
@@ -70,18 +67,49 @@ export namespace ProjectCommands {
             return
         }
 
-        const safeWalletName = walletName.replace(/[^-_.a-z0-9]/gi, "-")
+        let safeWalletName = walletName.replace(/[^-_.a-z0-9]/gi, "-")
         let filename = posixPath(walletFilesFolder, `${safeWalletName}.vetools-wallet.json`)
         let i = 0
         while (fs.existsSync(filename)) {
             i++
-            filename = posixPath(walletFilesFolder, `${safeWalletName} (${i}).vetools-wallet.json`)
+            safeWalletName = `${safeWalletName} (${i})`
+            filename = posixPath(walletFilesFolder, `${safeWalletName}.vetools-wallet.json`)
         }
+
+        const walletJson = JSON.stringify(
+            {
+                name: safeWalletName,
+                address: wallet.address,
+                publicKey: wallet.publicKey,
+                privateKey: wallet.privateKey,
+                encryptedPrivateKey,
+            } as WalletJson,
+            null,
+            4
+        )
+
         await fs.promises.writeFile(filename, walletJson)
         await vscode.commands.executeCommand("vscode.open", vscode.Uri.file(filename))
     }
 
-    function xorEncrypt(text: string, key: string): string {
+    export async function findLocalWallets() {
+        const rootFolder = getWorkspaceRoot()
+        if (!rootFolder) {
+            await vscode.window.showErrorMessage(
+                "Please open a folder in your Visual Studio Code workspace before creating a wallet"
+            )
+            return
+        }
+
+        const walletFilesFolder = posixPath(rootFolder, "wallets")
+
+        return fs.readdirSync(walletFilesFolder).map((filename) => {
+            const walletJson = fs.readFileSync(posixPath(walletFilesFolder, filename), "utf-8")
+            return JSON.parse(walletJson) as WalletJson
+        })
+    }
+
+    export function xorEncrypt(text: string, key: string): string {
         let result = ""
         for (let i = 0; i < text.length; i++) {
             result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length))
@@ -89,7 +117,7 @@ export namespace ProjectCommands {
         return Buffer.from(result).toString("base64")
     }
 
-    function xorDecrypt(encryptedText: string, key: string): string {
+    export function xorDecrypt(encryptedText: string, key: string): string {
         const buffer = Buffer.from(encryptedText, "base64")
         let result = ""
         for (let i = 0; i < buffer.length; i++) {

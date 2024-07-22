@@ -15,7 +15,9 @@ class StatusBarCommands {
 
     public async startLocalNode() {
         const terminal = this.get()
-        terminal.sendText("ganache-cli")
+        terminal.sendText(
+            `ganache-cli -m "denial kitchen pet squirrel other broom bar gas better priority spoil cross"`
+        )
         terminal.show(true)
         window.showInformationMessage(`Started local node`)
     }

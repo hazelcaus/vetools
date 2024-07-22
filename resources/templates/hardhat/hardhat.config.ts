@@ -1,8 +1,7 @@
-import "@nomiclabs/hardhat-web3"
 import "@nomiclabs/hardhat-ethers"
 
 const VECHAIN_DEFAULT_MNEMONIC = "denial kitchen pet squirrel other broom bar gas better priority spoil cross"
-const VECHAIN_URL_SOLO = "http://127.0.0.1:8669"
+const VECHAIN_URL_SOLO = "http://127.0.0.1:8545"
 const VECHAIN_URL_TESTNET = "https://vethor-node-test.vechaindev.com"
 const VECHAIN_URL_MAINNET = "https://vethor-node.vechain.com"
 
