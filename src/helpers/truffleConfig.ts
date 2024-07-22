@@ -8,7 +8,7 @@ import ESTree from "estree"
 import fs from "fs-extra"
 import path from "path"
 import { Constants } from "../Constants"
-import { get_workspace_root } from "../helpers"
+import { getWorkspaceRoot } from "../helpers"
 import { MnemonicRepository } from "../services"
 import { try_execute_in_fork } from "./command"
 
@@ -254,7 +254,7 @@ export namespace TruffleConfiguration {
     async function getTruffleMetadata(): Promise<IConfiguration> {
         const truffleConfigTemplatePath = path.join(__dirname, "checkTruffleConfigTemplate.js")
 
-        const result = await try_execute_in_fork(get_workspace_root()!, truffleConfigTemplatePath)
+        const result = await try_execute_in_fork(getWorkspaceRoot()!, truffleConfigTemplatePath)
         const truffleConfigObject = result.messages!.find((message) => message.command === "truffleConfig")
 
         if (!truffleConfigObject || !truffleConfigObject.message) {

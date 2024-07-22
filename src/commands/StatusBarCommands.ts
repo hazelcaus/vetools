@@ -2,7 +2,7 @@ import { exec } from "child_process"
 import { Memento, window, Terminal } from "vscode"
 import * as vscode from "vscode"
 import { IExtensionAdapter, HardhatExtensionAdapter } from "../services/extensionAdapter"
-import { get_workspace_root, outputCommandHelper } from "../helpers"
+import { getWorkspaceRoot, outputCommandHelper } from "../helpers"
 
 class StatusBarCommands {
     // @ts-ignore
@@ -21,7 +21,7 @@ class StatusBarCommands {
     }
 
     public async stopLocalNode(): Promise<void> {
-        const workspace_root = get_workspace_root()!
+        const workspace_root = getWorkspaceRoot()!
         await outputCommandHelper.execute(workspace_root, "pkill -f", "ganache-cli")
         window.showInformationMessage(`Stopped local node`)
     }

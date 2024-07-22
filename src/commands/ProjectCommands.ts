@@ -2,21 +2,25 @@ import fs from "fs-extra"
 import path from "path"
 import { Uri, workspace } from "vscode"
 import { Constants } from "../Constants"
-import { required, outputCommandHelper, get_workspace_root } from "../helpers"
-import { copy_folders, show_ignorable_notification, show_open_folder_dialog } from "../utils/utils"
+import { required, outputCommandHelper, getWorkspaceRoot } from "../helpers"
+import { copy_folders, showIgnorableNotification, showOpenFolderDialog } from "../utils/utils"
 
 export namespace ProjectCommands {
-    export async function new_project(): Promise<void> {
-        await required.install_dependencies()
+    export async function newProject(): Promise<void> {
+        await required.installDependencies()
 
-        const project_path = await choose_new_project_dir()
+        const project_path = await chooseNewProjectDir()
 
-        await create_project(project_path)
+        await createProject(project_path)
+    }
+
+    export async function createWallet() {
+        
     }
 }
 
-async function choose_new_project_dir(): Promise<string> {
-    const project_path = await show_open_folder_dialog()
+async function chooseNewProjectDir(): Promise<string> {
+    const project_path = await showOpenFolderDialog()
 
     await fs.ensureDir(project_path)
     const files = await fs.readdir(project_path)
@@ -30,7 +34,7 @@ async function choose_new_project_dir(): Promise<string> {
     //     );
 
     //     if(answer === Constants.informationMessage.openButton) {
-    //         return choose_new_project_dir();
+    //         return chooseNewProjectDir();
     //     } else {
     //         throw new CancellationEvent();
     //     }
@@ -39,8 +43,8 @@ async function choose_new_project_dir(): Promise<string> {
     return project_path
 }
 
-async function create_project(project_path: string): Promise<void> {
-    await show_ignorable_notification("Creating new VeTools project", async () => {
+async function createProject(project_path: string): Promise<void> {
+    await showIgnorableNotification("Creating new VeTools project", async () => {
         try {
             const from = path.join(Constants.templates_directory, "hardhat")
             copy_folders(from, project_path)
@@ -52,11 +56,11 @@ async function create_project(project_path: string): Promise<void> {
             console.debug("workspace.workspaceFolder:", workspace.workspaceFolders)
         } catch (error) {
             fs.emptyDirSync(project_path)
-            throw new Error(`Could not create project. 'create_project' failed: ${(error as Error).message}`)
+            throw new Error(`Could not create project. 'createProject' failed: ${(error as Error).message}`)
         }
     })
 
-    await show_ignorable_notification("Installing dependencies", async () => {
+    await showIgnorableNotification("Installing dependencies", async () => {
         try {
             // npm install
             await outputCommandHelper.execute(project_path, "npm", "install -f")
@@ -67,5 +71,5 @@ async function create_project(project_path: string): Promise<void> {
         }
     })
 
-    await required.install_dependencies()
+    await required.installDependencies()
 }

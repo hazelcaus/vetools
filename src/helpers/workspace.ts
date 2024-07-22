@@ -1,7 +1,7 @@
 import { workspace } from "vscode"
 import { Constants } from "../Constants"
 
-export function get_workspace_root(ignoreException: boolean = false): string | undefined {
+export function getWorkspaceRoot(ignoreException: boolean = false): string | undefined {
     const workspaceRoot = workspace.workspaceFolders && workspace.workspaceFolders[0].uri.fsPath
 
     if (workspaceRoot === undefined && !ignoreException) {

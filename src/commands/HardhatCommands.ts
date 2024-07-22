@@ -5,68 +5,51 @@ import hdkey from "hdkey"
 import path from "path"
 import { QuickPickItem, Uri, window, workspace } from "vscode"
 import { Constants, RequiredApps } from "../Constants"
-import {
-    get_workspace_root,
-    outputCommandHelper,
-    required,
-    TruffleConfig,
-    TruffleConfiguration,
-    vscodeEnvironment,
-} from "../helpers"
-import { show_ignorable_notification, showQuickPick, copy_folders, copy_file, hardhat_to_truffle } from "../utils/utils"
+import { getWorkspaceRoot, outputCommandHelper, required, vscodeEnvironment } from "../helpers"
+import { showIgnorableNotification, showQuickPick } from "../utils/utils"
 import { Output } from "../Output"
 import { MnemonicRepository } from "../services"
 
-import { GanacheCommands } from "./GanacheCommands"
 import { statusBarCommands } from "./StatusBarCommands"
 import { getNodeStatus } from "../statusBar/nodeStatus"
-
-interface IDeployDestinationItem {
-    cmd: () => Promise<void>
-    cwd?: string
-    description?: string
-    detail?: string
-    label: string
-    networkId: string | number
-}
 
 interface IExtendedQuickPickItem extends QuickPickItem {
     extended: string
 }
 
 export namespace HardhatCommands {
-    export async function build_contracts(): Promise<void> {
-        await required.install_dependencies()
+    export async function buildContracts(): Promise<void> {
+        await required.installDependencies()
 
-        await show_ignorable_notification("Compiling Contracts", async () => {
+        await showIgnorableNotification("Compiling Contracts", async () => {
             try {
-                await outputCommandHelper.execute(get_workspace_root(), "npm", "run", "compile")
+                await outputCommandHelper.execute(getWorkspaceRoot(), "npm", "run", "compile")
             } catch (err) {
                 console.debug("Error:", (err as Error).toString())
             }
         })
     }
 
-    export async function deploy_contracts(): Promise<void> {
-        const workspace_root = get_workspace_root()!
-        await required.install_dependencies(true)
+    export async function deployContracts(): Promise<void> {
+        const workspace_root = getWorkspaceRoot()!
+        await required.installDependencies(true)
 
         const destinations = [
             {
-                cmd: deploy_to_network.bind(undefined, "development", workspace_root),
+                cmd: deployToNetwork.bind(undefined, "development", workspace_root),
                 cwd: workspace_root,
                 label: "$(plus) Local Node (experimental)",
                 networkId: "*",
             },
             {
-                cmd: deploy_to_network.bind(undefined, "testnet", workspace_root),
+                cmd: deployToNetwork.bind(undefined, "testnet", workspace_root),
                 cwd: workspace_root,
                 description: "Deploy to the Vechain Testnet",
                 label: "Vechain Testnet",
                 networkId: "*",
             },
             {
-                cmd: deploy_to_network.bind(undefined, "mainnet", workspace_root),
+                cmd: deployToNetwork.bind(undefined, "mainnet", workspace_root),
                 cwd: workspace_root,
                 description: "Experimental. Use at your own risk.",
                 label: "Vechain Mainnet",
@@ -82,7 +65,7 @@ export namespace HardhatCommands {
         await command.cmd()
     }
 
-    async function deploy_to_network(network_type: string, workspace_root: string): Promise<void> {
+    async function deployToNetwork(network_type: string, workspace_root: string): Promise<void> {
         let network_name: string
         if (network_type === "mainnet" || network_type === "testnet") {
             network_name = `vechain_${network_type}`
@@ -105,7 +88,7 @@ export namespace HardhatCommands {
         let should_proceed: boolean = true
         // if (network_name === "development") {
         //     // Spin up a solo node instance
-        //     await show_ignorable_notification("Spinning up local VeChain Node", async () => {
+        //     await showIgnorableNotification("Spinning up local VeChain Node", async () => {
         //         try {
         //             await outputCommandHelper.execute(
         //                 "/Users/sluzhba/Documents/dev/thor", // workspace_root,
@@ -122,9 +105,9 @@ export namespace HardhatCommands {
 
         const capitalized = network_type.charAt(0).toUpperCase() + network_type.slice(1)
         if (should_proceed) {
-            await show_ignorable_notification(`Deploying contracts to ${capitalized} (${network_name})`, async () => {
+            await showIgnorableNotification(`Deploying contracts to ${capitalized} (${network_name})`, async () => {
                 try {
-                    await required.install_dependencies()
+                    await required.installDependencies()
                     await outputCommandHelper.execute(
                         workspace_root,
                         "npx",
@@ -147,7 +130,7 @@ export namespace HardhatCommands {
                     // )
                     // const truffle_migrations_folder = path.join(Constants.templates_directory, "truffle", "migrations")
 
-                    // copy_folders(get_workspace_root()!, tmp_dir, true)
+                    // copy_folders(getWorkspaceRoot()!, tmp_dir, true)
                     // copy_folders(truffle_migrations_folder, final_tmp_dir, true)
                     // copy_file(truffle_config_file, path.join(tmp_dir, "truffle-config.js"))
                     // try {
@@ -157,7 +140,7 @@ export namespace HardhatCommands {
                     //         "Please write all your smart contracts within the `contracts` folder. This is a temporary inconvenience which will be fixed in the upcoming versions of VeTools."
                     //     )
                     // }
-                    // hardhat_to_truffle(get_workspace_root()!, tmp_dir)
+                    // hardhat_to_truffle(getWorkspaceRoot()!, tmp_dir)
 
                     // await outputCommandHelper.execute(
                     //     tmp_dir,

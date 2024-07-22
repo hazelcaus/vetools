@@ -1,9 +1,9 @@
 import semver from "semver"
 import { Constants, RequiredApps } from "../Constants"
-import { get_workspace_root } from "./workspace"
+import { getWorkspaceRoot } from "./workspace"
 import { Output } from "../Output"
 import { execute, try_execute } from "./command"
-import { show_ignorable_notification } from "../utils/utils"
+import { showIgnorableNotification } from "../utils/utils"
 
 export namespace required {
     export interface IRequiredVersion {
@@ -36,8 +36,8 @@ export namespace required {
         return !invalid
     }
 
-    export async function install_dependencies(should_check_hardhat: boolean = false) {
-        await show_ignorable_notification("Setting up a few things. One moment...", async () => {
+    export async function installDependencies(should_check_hardhat: boolean = false) {
+        await showIgnorableNotification("Setting up a few things. One moment...", async () => {
             if (!(await check_apps(RequiredApps.npm))) {
                 throw new Error(`You don't have npm installed. Please install before continuing`)
             }
@@ -103,7 +103,7 @@ export namespace required {
         const majorVersion = min_required_version.split(".")[0]
 
         const global_version = (
-            await try_execute(get_workspace_root(true), `npm list -g --depth 0 truffle`)
+            await try_execute(getWorkspaceRoot(true), `npm list -g --depth 0 truffle`)
         ).cmdOutput.match(/truffle@(\d+.\d+.\d+)/)
 
         return (
@@ -118,7 +118,7 @@ export namespace required {
         const majorVersion = min_required_version.split(".")[0]
 
         const global_version = (
-            await try_execute(get_workspace_root(true), `npm list -g --depth 0 ganache-cli`)
+            await try_execute(getWorkspaceRoot(true), `npm list -g --depth 0 ganache-cli`)
         ).cmdOutput.match(/ganache-cli@(\d+.\d+.\d+)/)
 
         return (
@@ -132,9 +132,9 @@ export namespace required {
         const min_required_version = required_version.min
         const majorVersion = min_required_version.split(".")[0]
 
-        const localVersion = (
-            await try_execute(get_workspace_root(true), `npm list --depth 0 hardhat`)
-        ).cmdOutput.match(/hardhat@(\d+.\d+.\d+)/)
+        const localVersion = (await try_execute(getWorkspaceRoot(true), `npm list --depth 0 hardhat`)).cmdOutput.match(
+            /hardhat@(\d+.\d+.\d+)/
+        )
 
         return (
             (localVersion && localVersion[1]) ||
@@ -200,7 +200,7 @@ export namespace required {
                 ? `^${package_version}`
                 : `>=${package_version.min} <${package_version.max}`
 
-        const workspaceRoot = get_workspace_root(true)
+        const workspaceRoot = getWorkspaceRoot(true)
 
         if (workspaceRoot === undefined && !is_global) {
             throw new Error(Constants.errorMessageStrings.WorkspaceShouldBeOpened)

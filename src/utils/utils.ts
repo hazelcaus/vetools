@@ -83,7 +83,7 @@ export function copy_folders(from: string, to: string, should_delete_to: boolean
     })
 }
 
-export async function show_open_folder_dialog(): Promise<string> {
+export async function showOpenFolderDialog(): Promise<string> {
     const folder = await window.showOpenDialog({
         canSelectFiles: false,
         canSelectFolders: true,
@@ -146,7 +146,7 @@ export async function showNotification(options: Notification.IShowNotificationOp
     Notification.types[options.type](options.message)
 }
 
-export async function show_ignorable_notification(message: string, fn: () => Promise<any>): Promise<void> {
+export async function showIgnorableNotification(message: string, fn: () => Promise<any>): Promise<void> {
     const ignoreNotification = false
 
     await window.withProgress(
@@ -221,7 +221,7 @@ export function hardhat_to_truffle(hardhat_folder: string, truffle_folder: strin
     if (!fs.existsSync(Constants.truffle_migrations_temp_dir)) {
         fs.mkdir(Constants.truffle_migrations_temp_dir)
     }
-    const write_migrations_file = path.join(Constants.truffle_migrations_temp_dir, "2_deploy_contracts.js")
+    const write_migrations_file = path.join(Constants.truffle_migrations_temp_dir, "2_deployContracts.js")
 
     let require_files = ""
     let deployer_funcs = ""

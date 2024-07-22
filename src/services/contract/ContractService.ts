@@ -2,7 +2,7 @@ import fs from "fs-extra"
 import path from "path"
 import { HttpService } from ".."
 import { Constants } from "../../Constants"
-import { get_workspace_root, TruffleConfiguration } from "../../helpers"
+import { getWorkspaceRoot, TruffleConfiguration } from "../../helpers"
 import { Contract } from "./Contract"
 
 export namespace ContractService {
@@ -90,6 +90,6 @@ export namespace ContractService {
             return dir
         }
 
-        return path.join(get_workspace_root()!, dir)
+        return path.join(getWorkspaceRoot()!, dir)
     }
 }

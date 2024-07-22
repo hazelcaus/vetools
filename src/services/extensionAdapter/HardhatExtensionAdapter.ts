@@ -11,10 +11,10 @@ export class HardhatExtensionAdapter implements IExtensionAdapter {
     public async validateExtension(): Promise<void> {}
 
     public async build(): Promise<void> {
-        return HardhatCommands.build_contracts()
+        return HardhatCommands.buildContracts()
     }
 
     public async deploy() {
-        return HardhatCommands.deploy_contracts()
+        return HardhatCommands.deployContracts()
     }
 }

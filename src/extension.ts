@@ -22,7 +22,7 @@ export async function activate(context: ExtensionContext) {
     await sdkCoreCommands.initialize(context.globalState)
     await statusBarCommands.initialize(context.globalState)
 
-    await required.install_dependencies()
+    await required.installDependencies()
 
     setCommandContext(CommandContext.Enabled, true)
     setCommandContext(CommandContext.IsWorkspaceOpen, isWorkspaceOpen())
@@ -32,8 +32,8 @@ export async function activate(context: ExtensionContext) {
     })
 
     // Commands
-    const new_project = commands.registerCommand("vetools.newProject", async () => {
-        await try_execute(() => ProjectCommands.new_project())
+    const newProject = commands.registerCommand("vetools.newProject", async () => {
+        await try_execute(() => ProjectCommands.newProject())
     })
     const buildContracts = commands.registerCommand("vetools.buildContracts", async () => {
         await try_execute(() => sdkCoreCommands.build())
@@ -61,7 +61,7 @@ export async function activate(context: ExtensionContext) {
 
     const subscriptions = [
         refresh,
-        new_project,
+        newProject,
         buildContracts,
         deployContracts,
         startLocalNode,

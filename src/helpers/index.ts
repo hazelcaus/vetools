@@ -10,7 +10,7 @@ import * as workspaceHelpers from "./workspace"
 // export * from "./userInteraction";
 
 const spawnProcess = outputCommandHelper.spawnProcess
-const get_workspace_root = workspaceHelpers.get_workspace_root
+const getWorkspaceRoot = workspaceHelpers.getWorkspaceRoot
 const isWorkspaceOpen = workspaceHelpers.isWorkspaceOpen
 const TruffleConfig = TruffleConfiguration.TruffleConfig
 const CommandContext = commandContext.CommandContext
@@ -18,7 +18,7 @@ const setCommandContext = commandContext.setCommandContext
 
 export {
     CommandContext,
-    get_workspace_root,
+    getWorkspaceRoot,
     isWorkspaceOpen,
     outputCommandHelper,
     required,

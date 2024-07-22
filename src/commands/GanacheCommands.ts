@@ -6,7 +6,7 @@ import { ProjectView } from "../ViewItems"
 
 export namespace GanacheCommands {
     export async function start_ganache(): Promise<void> {
-        await required.install_dependencies()
+        await required.installDependencies()
 
         const port = Constants.default_port
         const ganache_process = await GanacheService.start_ganache_server(port)
