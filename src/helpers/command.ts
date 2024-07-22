@@ -38,7 +38,7 @@ export async function execute(
             `${[commands, ...args].join(" ")}`
     )
 
-    const result: ICommandResult = await try_execute(workingDirectory, commands, ...args)
+    const result: ICommandResult = await tryExecute(workingDirectory, commands, ...args)
 
     Output.output_line("vetools", Constants.executeCommandMessage.finishRunningCommand)
 
@@ -54,7 +54,7 @@ export function spawnProcess(workingDirectory: string | undefined, commands: str
     return spawn(commands, args, options)
 }
 
-export async function try_execute(
+export async function tryExecute(
     workingDirectory: string | undefined,
     commands: string,
     ...args: string[]
@@ -118,7 +118,7 @@ export async function executeCommandInFork(
             `${[modulePath, ...args].join(" ")}`
     )
 
-    const result: ICommandResult = await try_execute_in_fork(workingDirectory, modulePath, ...args)
+    const result: ICommandResult = await tryExecute_in_fork(workingDirectory, modulePath, ...args)
 
     if (result.code !== 0) {
         throw new Error(Constants.executeCommandMessage.failedToRunScript(modulePath))
@@ -132,7 +132,7 @@ export function forkProcess(workingDirectory: string | undefined, modulePath: st
     return fork(modulePath, args, options)
 }
 
-export async function try_execute_in_fork(
+export async function tryExecute_in_fork(
     workingDirectory: string | undefined,
     modulePath: string,
     ...args: string[]

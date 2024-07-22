@@ -31,7 +31,7 @@ export async function execute(
     commands: string,
     ...args: string[]
 ): Promise<string> {
-    const result: ICommandResult = await try_execute(workingDirectory, commands, ...args)
+    const result: ICommandResult = await tryExecute(workingDirectory, commands, ...args)
 
     if (result.code !== 0) {
         throw new Error("Error while execution command: " + commands.concat(" ", ...args.join(" ")))
@@ -40,7 +40,7 @@ export async function execute(
     return result.cmdOutput
 }
 
-async function try_execute(
+async function tryExecute(
     workingDirectory: string | undefined,
     commands: string,
     ...args: string[]
@@ -79,7 +79,7 @@ export async function executeCommandInFork(
     modulePath: string,
     ...args: string[]
 ): Promise<string> {
-    const result: ICommandResult = await try_execute_in_fork(workingDirectory, modulePath, ...args)
+    const result: ICommandResult = await tryExecute_in_fork(workingDirectory, modulePath, ...args)
 
     if (result.code !== 0) {
         throw new Error(`Failed to run script - ${modulePath}. More details in output`)
@@ -93,17 +93,17 @@ export function forkProcess(workingDirectory: string | undefined, modulePath: st
     return cp.fork(modulePath, args, options)
 }
 
-export async function try_execute_in_fork(
+export async function tryExecute_in_fork(
     workingDirectory: string | undefined,
     modulePath: string,
     ...args: string[]
 ): Promise<ICommandResult> {
-    const { result } = try_execute_in_forkAsync(workingDirectory, modulePath, ...args)
+    const { result } = tryExecute_in_forkAsync(workingDirectory, modulePath, ...args)
 
     return result
 }
 
-export function try_execute_in_forkAsync(
+export function tryExecute_in_forkAsync(
     workingDirectory: string | undefined,
     modulePath: string,
     ...args: string[]

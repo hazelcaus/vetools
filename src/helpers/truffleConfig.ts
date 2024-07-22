@@ -10,7 +10,7 @@ import path from "path"
 import { Constants } from "../Constants"
 import { getWorkspaceRoot } from "../helpers"
 import { MnemonicRepository } from "../services"
-import { try_execute_in_fork } from "./command"
+import { tryExecute_in_fork } from "./command"
 
 export namespace TruffleConfiguration {
     const notAllowedSymbols = new RegExp(
@@ -254,7 +254,7 @@ export namespace TruffleConfiguration {
     async function getTruffleMetadata(): Promise<IConfiguration> {
         const truffleConfigTemplatePath = path.join(__dirname, "checkTruffleConfigTemplate.js")
 
-        const result = await try_execute_in_fork(getWorkspaceRoot()!, truffleConfigTemplatePath)
+        const result = await tryExecute_in_fork(getWorkspaceRoot()!, truffleConfigTemplatePath)
         const truffleConfigObject = result.messages!.find((message) => message.command === "truffleConfig")
 
         if (!truffleConfigObject || !truffleConfigObject.message) {

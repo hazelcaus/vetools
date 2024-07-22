@@ -8,9 +8,9 @@ export interface IExtensionAdapter {
 
 export class HardhatExtensionAdapter implements IExtensionAdapter {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    public async validateExtension(): Promise<void> {}
+    public async validateExtension() {}
 
-    public async build(): Promise<void> {
+    public async build() {
         return HardhatCommands.buildContracts()
     }
 

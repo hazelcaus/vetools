@@ -140,13 +140,13 @@ export async function showConfirmationDialog(message: string): Promise<boolean> 
     return answer === Constants.confirmationDialogResult.yes
 }
 
-export async function showNotification(options: Notification.IShowNotificationOptions): Promise<void> {
+export async function showNotification(options: Notification.IShowNotificationOptions) {
     options.type = options.type || NotificationOptions.info
 
     Notification.types[options.type](options.message)
 }
 
-export async function showIgnorableNotification(message: string, fn: () => Promise<any>): Promise<void> {
+export async function showIgnorableNotification(message: string, fn: () => Promise<any>) {
     const ignoreNotification = false
 
     await window.withProgress(

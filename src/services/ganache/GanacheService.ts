@@ -57,7 +57,7 @@ export namespace GanacheService {
         return ganache_processes[port]
     }
 
-    export async function stopGanacheServer(port: number | string, kill_out_of_band: boolean = true): Promise<void> {
+    export async function stopGanacheServer(port: number | string, kill_out_of_band: boolean = true) {
         return stopGanacheProcess(ganache_processes[port], kill_out_of_band)
     }
 
@@ -66,7 +66,7 @@ export namespace GanacheService {
         return result ? result[0].slice(1) : Constants.defaultLocalhostPort.toString()
     }
 
-    export async function dispose(): Promise<void> {
+    export async function dispose() {
         const shouldBeFree = Object.values(ganache_processes).map((ganache_process) =>
             stopGanacheProcess(ganache_process, false)
         )
@@ -90,7 +90,7 @@ export namespace GanacheService {
         return ganache_process
     }
 
-    async function stopGanacheProcess(ganache_process: IGanacheProcess, kill_out_of_band: boolean): Promise<void> {
+    async function stopGanacheProcess(ganache_process: IGanacheProcess, kill_out_of_band: boolean) {
         if (!ganache_process) return
 
         const { output, pid, port, process } = ganache_process

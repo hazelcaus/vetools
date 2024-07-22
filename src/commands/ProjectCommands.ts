@@ -4,9 +4,10 @@ import { Uri, workspace } from "vscode"
 import { Constants } from "../Constants"
 import { required, outputCommandHelper, getWorkspaceRoot } from "../helpers"
 import { copy_folders, showIgnorableNotification, showOpenFolderDialog } from "../utils/utils"
+import IoHelpers from "../utils/ioHelpers"
 
 export namespace ProjectCommands {
-    export async function newProject(): Promise<void> {
+    export async function newProject() {
         await required.installDependencies()
 
         const project_path = await chooseNewProjectDir()
@@ -15,7 +16,10 @@ export namespace ProjectCommands {
     }
 
     export async function createWallet() {
-        
+        const walletName = await IoHelpers.enterString("Wallet name")
+        if (!walletName) {
+            return
+        }
     }
 }
 
@@ -43,7 +47,7 @@ async function chooseNewProjectDir(): Promise<string> {
     return project_path
 }
 
-async function createProject(project_path: string): Promise<void> {
+async function createProject(project_path: string) {
     await showIgnorableNotification("Creating new VeTools project", async () => {
         try {
             const from = path.join(Constants.templates_directory, "hardhat")

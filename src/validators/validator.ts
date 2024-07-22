@@ -99,7 +99,7 @@ export class Validator {
         }
     }
 
-    private async validate(fn: IRule): Promise<void> {
+    private async validate(fn: IRule) {
         const error = await fn.validate(this.value)
 
         if (error) {

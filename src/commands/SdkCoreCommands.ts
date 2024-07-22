@@ -6,7 +6,7 @@ class SdkCoreCommands {
     private global_state?: Memento
     private extension_adapter!: IExtensionAdapter
 
-    public async initialize(global_state: Memento): Promise<void> {
+    public async initialize(global_state: Memento) {
         this.global_state = global_state
 
         this.extension_adapter = this.getExtensionAdapter()
@@ -15,11 +15,11 @@ class SdkCoreCommands {
         })
     }
 
-    public async build(): Promise<void> {
+    public async build() {
         return this.extension_adapter.build()
     }
 
-    public async deploy(): Promise<void> {
+    public async deploy() {
         return this.extension_adapter.deploy()
     }
 

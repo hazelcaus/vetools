@@ -10,7 +10,7 @@ import crypto from "crypto"
 import ESTree from "estree"
 import fs from "fs-extra"
 import path from "path"
-import { try_execute_in_fork } from "./cmdCommandExecutor"
+import { tryExecute_in_fork } from "./cmdCommandExecutor"
 
 export namespace ConfigurationReader {
     const notAllowedSymbols = new RegExp(
@@ -251,7 +251,7 @@ export namespace ConfigurationReader {
             path.join(workingDirectory, "truffle-config.js")
         )
 
-        const result = await try_execute_in_fork(workingDirectory, truffleConfigTemplatePath, truffleConfigPath)
+        const result = await tryExecute_in_fork(workingDirectory, truffleConfigTemplatePath, truffleConfigPath)
         const truffleConfigObject = result.messages!.find((message) => message.command === "truffleConfig")
 
         if (!truffleConfigObject || !truffleConfigObject.message) {

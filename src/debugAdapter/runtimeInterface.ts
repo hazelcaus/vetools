@@ -33,7 +33,7 @@ export default class RuntimeInterface extends EventEmitter {
         this._fileLookupMap = new Map()
     }
 
-    public clearBreakpoints(): Promise<void> {
+    public clearBreakpoints() {
         return this._session ? this._session.removeAllBreakpoints() : Promise.resolve()
     }
 
@@ -120,7 +120,7 @@ export default class RuntimeInterface extends EventEmitter {
         }
     }
 
-    public async continue(): Promise<void> {
+    public async continue() {
         this.validateSession()
         await this._session!.continueUntilBreakpoint()
         this.processStepping("stopOnBreakpoint")
@@ -131,25 +131,25 @@ export default class RuntimeInterface extends EventEmitter {
         this.send_event("stopOnBreakpoint")
     }
 
-    public async stepNext(): Promise<void> {
+    public async stepNext() {
         this.validateSession()
         await this._session!.stepNext()
         this.processStepping("stopOnStepOver")
     }
 
-    public async stepIn(): Promise<void> {
+    public async stepIn() {
         this.validateSession()
         await this._session!.stepInto()
         this.processStepping("stopOnStepIn")
     }
 
-    public async stepOut(): Promise<void> {
+    public async stepOut() {
         this.validateSession()
         await this._session!.stepOut()
         this.processStepping("stopOnStepOut")
     }
 
-    public async attach(txHash: string, working_directory: string): Promise<void> {
+    public async attach(txHash: string, working_directory: string) {
         console.log("[attach]: before:", working_directory)
         const result = await prepare_contracts(working_directory)
         console.log("[attach]: result", result)

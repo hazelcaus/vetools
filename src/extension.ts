@@ -33,19 +33,22 @@ export async function activate(context: ExtensionContext) {
 
     // Commands
     const newProject = commands.registerCommand("vetools.newProject", async () => {
-        await try_execute(() => ProjectCommands.newProject())
+        await tryExecute(() => ProjectCommands.newProject())
     })
     const buildContracts = commands.registerCommand("vetools.buildContracts", async () => {
-        await try_execute(() => sdkCoreCommands.build())
+        await tryExecute(() => sdkCoreCommands.build())
     })
     const deployContracts = commands.registerCommand("vetools.deployContracts", async () => {
-        await try_execute(() => sdkCoreCommands.deploy())
+        await tryExecute(() => sdkCoreCommands.deploy())
     })
     const startLocalNode = commands.registerCommand("vetools.startLocalNode", async () => {
-        await try_execute(() => statusBarCommands.startLocalNode())
+        await tryExecute(() => statusBarCommands.startLocalNode())
     })
     const stopLocalNode = commands.registerCommand("vetools.stopLocalNode", async () => {
-        await try_execute(() => statusBarCommands.stopLocalNode())
+        await tryExecute(() => statusBarCommands.stopLocalNode())
+    })
+    const createWallet = commands.registerCommand("vetools.createWallet", async () => {
+        await tryExecute(() => ProjectCommands.createWallet())
     })
     const get_debug_workspace_folder = commands.registerCommand("vetools.debugWorkspaceFolder", () => {
         return Constants.truffle_temp_dir
@@ -56,38 +59,40 @@ export async function activate(context: ExtensionContext) {
 
     // Debugger
     const start_debugger = commands.registerCommand("vetools.debug", async () => {
-        await try_execute(() => DebuggerCommands.start_debugger())
+        await tryExecute(() => DebuggerCommands.start_debugger())
     })
 
-    const subscriptions = [
-        refresh,
-        newProject,
-        buildContracts,
-        deployContracts,
-        startLocalNode,
-        stopLocalNode,
-        start_debugger,
-        get_debug_workspace_folder,
-        get_provider_url,
-    ]
-    context.subscriptions.push(...subscriptions)
+    context.subscriptions.push(
+        ...[
+            refresh,
+            newProject,
+            buildContracts,
+            deployContracts,
+            startLocalNode,
+            stopLocalNode,
+            createWallet,
+            start_debugger,
+            get_debug_workspace_folder,
+            get_provider_url,
+        ]
+    )
 
     // Start a recurring task to keep local node status updated
     setInterval(nodeStatus, 1000)
 }
 
-export async function deactivate(): Promise<void> {
+export async function deactivate() {
     console.debug("DEACTIVATE CALLED")
     // This method is called when your extension is deactivated
     // To dispose of all extensions, vscode provides 5 sec.
     // Therefore, please, call important dispose functions first and don't use await
     // For more information see https://github.com/Microsoft/vscode/issues/47881
-    await try_execute(() => GanacheCommands.stop_ganache())
+    await tryExecute(() => GanacheCommands.stop_ganache())
     GanacheService.dispose()
     Output.dispose()
 }
 
-async function try_execute(func: () => Promise<any>, err_msg: string | null = null): Promise<void> {
+async function tryExecute(func: () => Promise<any>, err_msg: string | null = null) {
     try {
         await func()
     } catch (error) {

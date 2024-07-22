@@ -1,23 +1,23 @@
-import { try_execute } from "./command"
+import { tryExecute } from "./command"
 
 const isWin = process.platform === "win32"
 
-export async function killPort(port: string | number): Promise<void> {
+export async function killPort(port: string | number) {
     const pid = await findPid(port)
 
     return killPid(pid)
 }
 
-export async function killPid(pid: number = NaN): Promise<void> {
+export async function killPid(pid: number = NaN) {
     if (isNaN(pid)) {
         return
     }
 
-    return try_execute(undefined, killPidCommand(pid)).then(() => undefined)
+    return tryExecute(undefined, killPidCommand(pid)).then(() => undefined)
 }
 
 export async function findPid(port: string | number): Promise<number> {
-    const result = await try_execute(undefined, findPidCommand(port))
+    const result = await tryExecute(undefined, findPidCommand(port))
 
     return parsePid(result.cmdOutput)
 }

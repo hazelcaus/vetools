@@ -23,7 +23,7 @@ class InfuraClient {
         this.onCacheChange = this.eventEmitter.event
     }
 
-    public async initialize(globalState: Memento): Promise<void> {
+    public async initialize(globalState: Memento) {
         await this.dispose()
 
         this.globalState = globalState
@@ -148,7 +148,7 @@ class InfuraClient {
         return response.result.project
     }
 
-    public async dispose(): Promise<void> {
+    public async dispose() {
         if (this.statusBarItem) {
             this.statusBarItem.dispose()
         }
@@ -182,13 +182,13 @@ class InfuraClient {
             : undefined
     }
 
-    private async updateInfuraCache(newInfuraCache?: IInfuraCache): Promise<void> {
+    private async updateInfuraCache(newInfuraCache?: IInfuraCache) {
         if (this.globalState) {
             await this.globalState.update(Constants.globalStateKeys.infuraCredentialsCacheKey, newInfuraCache)
         }
     }
 
-    private async updateCredentials(user: any, tokens: IToken): Promise<void> {
+    private async updateCredentials(user: any, tokens: IToken) {
         await this.updateInfuraCache({ user, tokens })
 
         if (tokens && !user.email) {
@@ -198,7 +198,7 @@ class InfuraClient {
         }
     }
 
-    private async cleanCredentials(): Promise<void> {
+    private async cleanCredentials() {
         await this.updateInfuraCache()
         await this.setExcludedProjects([], [])
         this.eventEmitter.fire()

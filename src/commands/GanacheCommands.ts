@@ -5,7 +5,7 @@ import { GanacheService, TreeManager } from "../services"
 import { ProjectView } from "../ViewItems"
 
 export namespace GanacheCommands {
-    export async function start_ganache(): Promise<void> {
+    export async function start_ganache() {
         await required.installDependencies()
 
         const port = Constants.default_port
@@ -17,7 +17,7 @@ export namespace GanacheCommands {
         }
     }
 
-    export async function stop_ganache(): Promise<void> {
+    export async function stop_ganache() {
         const port = Constants.default_port
         const port_status = await GanacheService.getPortStatus(port)
 

@@ -51,7 +51,7 @@ export async function signIn() {
     }
 }
 
-export async function signOut(token: string): Promise<void> {
+export async function signOut(token: string) {
     const queryParams = queryString({ grant_type: Constants.infuraRequestGrantType.authorizationCode, token })
     const options = { body: queryParams, headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     const requestUrl = new url.URL(Constants.infuraAuthUrls.revoke, Constants.infuraAuthUrls.baseURL)

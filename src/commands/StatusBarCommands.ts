@@ -9,18 +9,18 @@ class StatusBarCommands {
     private global_state?: Memento
     private type = "local-node"
 
-    public async initialize(global_state: Memento): Promise<void> {
+    public async initialize(global_state: Memento) {
         this.global_state = global_state
     }
 
-    public async startLocalNode(): Promise<void> {
+    public async startLocalNode() {
         const terminal = this.get()
         terminal.sendText("ganache-cli")
         terminal.show(true)
         window.showInformationMessage(`Started local node`)
     }
 
-    public async stopLocalNode(): Promise<void> {
+    public async stopLocalNode() {
         const workspace_root = getWorkspaceRoot()!
         await outputCommandHelper.execute(workspace_root, "pkill -f", "ganache-cli")
         window.showInformationMessage(`Stopped local node`)

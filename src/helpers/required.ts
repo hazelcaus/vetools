@@ -2,7 +2,7 @@ import semver from "semver"
 import { Constants, RequiredApps } from "../Constants"
 import { getWorkspaceRoot } from "./workspace"
 import { Output } from "../Output"
-import { execute, try_execute } from "./command"
+import { execute, tryExecute } from "./command"
 import { showIgnorableNotification } from "../utils/utils"
 
 export namespace required {
@@ -103,7 +103,7 @@ export namespace required {
         const majorVersion = min_required_version.split(".")[0]
 
         const global_version = (
-            await try_execute(getWorkspaceRoot(true), `npm list -g --depth 0 truffle`)
+            await tryExecute(getWorkspaceRoot(true), `npm list -g --depth 0 truffle`)
         ).cmdOutput.match(/truffle@(\d+.\d+.\d+)/)
 
         return (
@@ -118,7 +118,7 @@ export namespace required {
         const majorVersion = min_required_version.split(".")[0]
 
         const global_version = (
-            await try_execute(getWorkspaceRoot(true), `npm list -g --depth 0 ganache-cli`)
+            await tryExecute(getWorkspaceRoot(true), `npm list -g --depth 0 ganache-cli`)
         ).cmdOutput.match(/ganache-cli@(\d+.\d+.\d+)/)
 
         return (
@@ -132,7 +132,7 @@ export namespace required {
         const min_required_version = required_version.min
         const majorVersion = min_required_version.split(".")[0]
 
-        const localVersion = (await try_execute(getWorkspaceRoot(true), `npm list --depth 0 hardhat`)).cmdOutput.match(
+        const localVersion = (await tryExecute(getWorkspaceRoot(true), `npm list --depth 0 hardhat`)).cmdOutput.match(
             /hardhat@(\d+.\d+.\d+)/
         )
 
@@ -142,7 +142,7 @@ export namespace required {
         )
     }
 
-    export async function install_npm(): Promise<void> {
+    export async function install_npm() {
         try {
             await install_via_npm(RequiredApps.npm, Constants.requiredVersions[RequiredApps.npm])
         } catch (error) {
@@ -152,7 +152,7 @@ export namespace required {
         currentState.npm = await create_version_object(RequiredApps.npm, get_npm_version)
     }
 
-    export async function install_truffle(): Promise<void> {
+    export async function install_truffle() {
         try {
             await install_via_npm(RequiredApps.truffle, Constants.requiredVersions[RequiredApps.truffle], true)
         } catch (error) {
@@ -162,7 +162,7 @@ export namespace required {
         currentState.truffle = await create_version_object(RequiredApps.truffle, get_truffle_version)
     }
 
-    export async function install_ganache(): Promise<void> {
+    export async function install_ganache() {
         try {
             await install_via_npm(RequiredApps.ganache, Constants.requiredVersions[RequiredApps.ganache], true)
         } catch (error) {
@@ -194,7 +194,7 @@ export namespace required {
         package_name: string,
         package_version: string | { min: string; max: string },
         is_global: boolean = true
-    ): Promise<void> {
+    ) {
         const versionString =
             typeof package_version === "string"
                 ? `^${package_version}`
@@ -211,7 +211,7 @@ export namespace required {
 
     async function get_version(program: string, command: string, matcher: RegExp): Promise<string> {
         try {
-            const result = await try_execute(undefined, program, command)
+            const result = await tryExecute(undefined, program, command)
             if (result.code === 0) {
                 const output = result.cmdOutput || result.cmdOutputIncludingStderr
                 const installedVersion = output.match(matcher)

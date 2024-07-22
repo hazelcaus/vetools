@@ -97,10 +97,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
         this.sendEvent(new InitializedEvent())
     }
 
-    protected async launchRequest(
-        response: DebugProtocol.LaunchResponse,
-        args: DebuggerTypes.ILaunchRequestArguments
-    ): Promise<void> {
+    protected async launchRequest(response: DebugProtocol.LaunchResponse, args: DebuggerTypes.ILaunchRequestArguments) {
         await this.sendErrorIfFailed(response, async () => {
             // make sure to 'Stop' the buffered logging if 'trace' is not set
             // logger.setup enable logs in client
@@ -129,7 +126,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async setBreakPointsRequest(
         response: DebugProtocol.SetBreakpointsResponse,
         args: DebugProtocol.SetBreakpointsArguments
-    ): Promise<void> {
+    ) {
         await this.sendErrorIfFailed(response, async () => {
             const path = args.source.path as string
             const clientLines = args.lines || []
@@ -166,7 +163,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
         })
     }
 
-    protected async threadsRequest(response: DebugProtocol.ThreadsResponse): Promise<void> {
+    protected async threadsRequest(response: DebugProtocol.ThreadsResponse) {
         // return a default thread
         await this.sendErrorIfFailed(response, async () => {
             response.body = {
@@ -179,7 +176,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async stackTraceRequest(
         response: DebugProtocol.StackTraceResponse
         /* args: DebugProtocol.StackTraceArguments */
-    ): Promise<void> {
+    ) {
         await this.sendErrorIfFailed(response, async () => {
             const callStack = this._runtime.callStack()
             if (callStack !== null) {
@@ -220,7 +217,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async variablesRequest(
         response: DebugProtocol.VariablesResponse,
         args: DebugProtocol.VariablesArguments
-    ): Promise<void> {
+    ) {
         const variables = await this._variablesHandler.getVariableAttributesByVariableRef(args.variablesReference)
 
         response.body = {
@@ -233,7 +230,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async continueRequest(
         response: DebugProtocol.ContinueResponse
         /* args: DebugProtocol.ContinueArguments */
-    ): Promise<void> {
+    ) {
         await this.sendErrorIfFailed(response, async () => {
             await this._runtime.continue()
             this.sendResponse(response)
@@ -251,7 +248,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async nextRequest(
         response: DebugProtocol.NextResponse
         /* args: DebugProtocol.NextArguments */
-    ): Promise<void> {
+    ) {
         await this.sendErrorIfFailed(response, async () => {
             await this._runtime.stepNext()
             this.sendResponse(response)
@@ -261,7 +258,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async stepInRequest(
         response: DebugProtocol.StepInResponse
         /* args: DebugProtocol.StepInArguments */
-    ): Promise<void> {
+    ) {
         await this.sendErrorIfFailed(response, async () => {
             await this._runtime.stepIn()
             this.sendResponse(response)
@@ -271,17 +268,14 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     protected async stepOutRequest(
         response: DebugProtocol.StepOutResponse
         /* args: DebugProtocol.StepOutArguments */
-    ): Promise<void> {
+    ) {
         await this.sendErrorIfFailed(response, async () => {
             await this._runtime.stepOut()
             this.sendResponse(response)
         })
     }
 
-    protected async evaluateRequest(
-        response: DebugProtocol.EvaluateResponse,
-        args: DebugProtocol.EvaluateArguments
-    ): Promise<void> {
+    protected async evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments) {
         await this.sendErrorIfFailed(response, async () => {
             if (
                 args.context === EVALUATE_REQUEST_TYPES.watch ||
@@ -299,7 +293,7 @@ export class VeToolsDebugSession extends LoggingDebugSession {
     }
 
     // is invoked via debugAdaterTrackerFactory
-    protected async customRequest(command: string, response: DebugProtocol.Response): Promise<void> {
+    protected async customRequest(command: string, response: DebugProtocol.Response) {
         await this.sendErrorIfFailed(response, async () => {
             switch (command) {
                 case GET_INSTRUCTIONS:

@@ -104,7 +104,7 @@ export class TransactionProvider {
         return ""
     }
 
-    private async prepare_transaction_input_decoder(): Promise<void> {
+    private async prepare_transaction_input_decoder() {
         if (this._is__transaction_input_decoder_ready) {
             return
         }

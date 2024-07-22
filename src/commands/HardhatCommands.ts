@@ -18,7 +18,7 @@ interface IExtendedQuickPickItem extends QuickPickItem {
 }
 
 export namespace HardhatCommands {
-    export async function buildContracts(): Promise<void> {
+    export async function buildContracts() {
         await required.installDependencies()
 
         await showIgnorableNotification("Compiling Contracts", async () => {
@@ -30,7 +30,7 @@ export namespace HardhatCommands {
         })
     }
 
-    export async function deployContracts(): Promise<void> {
+    export async function deployContracts() {
         const workspace_root = getWorkspaceRoot()!
         await required.installDependencies(true)
 
@@ -65,7 +65,7 @@ export namespace HardhatCommands {
         await command.cmd()
     }
 
-    async function deployToNetwork(network_type: string, workspace_root: string): Promise<void> {
+    async function deployToNetwork(network_type: string, workspace_root: string) {
         let network_name: string
         if (network_type === "mainnet" || network_type === "testnet") {
             network_name = `vechain_${network_type}`
@@ -160,7 +160,7 @@ export namespace HardhatCommands {
         }
     }
 
-    export async function get_private_key_from_mnemonic(): Promise<void> {
+    export async function get_private_key_from_mnemonic() {
         const mnemonic_items: IExtendedQuickPickItem[] = MnemonicRepository.getExistedMnemonicPaths().map(
             (mnemonic_path) => {
                 const saved_mnemonic = MnemonicRepository.get_mnemonic(mnemonic_path)
