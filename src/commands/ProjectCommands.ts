@@ -14,7 +14,6 @@ export type WalletJson = {
     name: string
     address: string
     publicKey: string
-    privateKey: string
     encryptedPrivateKey: string
 }
 
@@ -81,7 +80,6 @@ export namespace ProjectCommands {
                 name: safeWalletName,
                 address: wallet.address,
                 publicKey: wallet.publicKey,
-                privateKey: wallet.privateKey,
                 encryptedPrivateKey,
             } as WalletJson,
             null,

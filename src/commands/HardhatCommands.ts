@@ -16,7 +16,7 @@ import { statusBarCommands } from "./StatusBarCommands"
 import { getNodeStatus } from "../statusBar/nodeStatus"
 import { ProjectCommands } from "./ProjectCommands"
 import IoHelpers from "../utils/ioHelpers"
-import { Wallet } from "ethers"
+import { ethers, Wallet } from "ethers"
 
 interface IExtendedQuickPickItem extends QuickPickItem {
     extended: string
@@ -66,7 +66,7 @@ export namespace HardhatCommands {
         const selectedWallet = await showQuickPick(wallets, { ignoreFocusOut: true, placeHolder: "Select a wallet" })
 
         // prompt for password
-        const enteredPassword = await IoHelpers.choosePassword("Enter the password for the selected wallet", true)
+        const enteredPassword = await IoHelpers.enterPassword("Enter the password for the selected wallet")
         Output.output_line("VeTools", "Entered password: " + enteredPassword)
 
         if (enteredPassword === undefined) {
@@ -131,6 +131,18 @@ export namespace HardhatCommands {
             network_name = "development" // development environment TODO
         }
 
+        /*
+                Modify Hardhat.config.ts
+            */
+        const hardhatConfigPath = path.join(workspaceRoot, "hardhat.config.ts")
+
+        if (!fs.existsSync(hardhatConfigPath)) {
+            throw new Error("hardhat.config.ts not found")
+        }
+
+        // modify hardhat.config.ts
+        let oldHardhatContents = fs.readFileSync(hardhatConfigPath, "utf8")
+
         if (network_name === "development") {
             const nodeStatus = getNodeStatus()
 
@@ -140,18 +152,9 @@ export namespace HardhatCommands {
             if (!isLocalNodeRunning) {
                 console.log("Starting local node...")
                 await statusBarCommands.startLocalNode()
+                await new Promise((resolve) => setTimeout(resolve, 2500))
             }
 
-            /*
-                Modify Hardhat.config.ts
-            */
-            const hardhatConfigPath = path.join(workspaceRoot, "hardhat.config.ts")
-
-            if (!fs.existsSync(hardhatConfigPath)) {
-                throw new Error("hardhat.config.ts not found")
-            }
-            // modify hardhat.config.ts
-            let oldHardhatContents = ""
             try {
                 let contents = fs.readFileSync(hardhatConfigPath, "utf8")
                 oldHardhatContents = contents
@@ -178,36 +181,17 @@ config.networks = {
                 // Write the modified content back to the file
                 fs.writeFileSync(hardhatConfigPath, contents, "utf8")
             } catch (err: any) {
+                fs.writeFileSync(hardhatConfigPath, oldHardhatContents)
                 throw new Error(err)
-            } finally {
-                // restore hardhat.config.js
-                // fs.writeFileSync(hardhatConfigPath, oldHardhatContents)
             }
 
             network_name = "customDevelopment"
 
             // Fund the new wallet
-            const selectedWallet = new Wallet(privateKey)
-            const funderWallet = new Wallet("0x7b3ed15194f5d748fed8a692f0256e486f95fb376e86299db6d75bd6400f2248") // 0x401EE82A841dc6B56DAe765bBBF3456Ea79F3B56
+            await fundUserWallet(privateKey)
         }
 
         let should_proceed: boolean = true
-        // if (network_name === "development") {
-        //     // Spin up a solo node instance
-        //     await showIgnorableNotification("Spinning up local VeChain Node", async () => {
-        //         try {
-        //             await outputCommandHelper.execute(
-        //                 "/Users/sluzhba/Documents/dev/thor", // workspaceRoot,
-        //                 "bin/thor", "solo", "--on-demand")
-        //         } catch (err) {
-        //             should_proceed = false
-        //             const msg =
-        //                 "Couldn't spin up local Thor node. Did you follow the installation requirements correctly? Is `bin/thor` accessible via your terminal?"
-        //             Output.output_line(Constants.outputChannel.truffleForVSCode, (err as Error).toString())
-        //             throw new Error(msg)
-        //         }
-        //     })
-        // }
 
         const capitalized = network_type.charAt(0).toUpperCase() + network_type.slice(1)
         if (should_proceed) {
@@ -223,86 +207,34 @@ config.networks = {
                         "--network",
                         network_name
                     )
-
-                    // // Now locally truffle migrate to local Ganache server
-                    // // First copy folder contents to temp dir
-                    // const tmp_dir = Constants.truffle_temp_dir
-                    // const final_tmp_dir = path.join(Constants.truffle_temp_dir, "migrations")
-                    // const truffle_config_file = path.join(Constants.templates_directory, "truffle", "truffle-config.js")
-                    // const truffle_migrations_sol_file = path.join(
-                    //     Constants.templates_directory,
-                    //     "truffle",
-                    //     "Migrations.sol"
-                    // )
-                    // const truffle_migrations_folder = path.join(Constants.templates_directory, "truffle", "migrations")
-
-                    // copy_folders(getWorkspaceRoot()!, tmp_dir, true)
-                    // copy_folders(truffle_migrations_folder, final_tmp_dir, true)
-                    // copy_file(truffle_config_file, path.join(tmp_dir, "truffle-config.js"))
-                    // try {
-                    //     copy_file(truffle_migrations_sol_file, path.join(tmp_dir, "contracts", "Migrations.sol"))
-                    // } catch (err) {
-                    //     throw new Error(
-                    //         "Please write all your smart contracts within the `contracts` folder. This is a temporary inconvenience which will be fixed in the upcoming versions of VeTools."
-                    //     )
-                    // }
-                    // hardhat_to_truffle(getWorkspaceRoot()!, tmp_dir)
-
-                    // await outputCommandHelper.execute(
-                    //     tmp_dir,
-                    //     "truffle",
-                    //     "migrate",
-                    //     "--reset",
-                    //     "--compile-all",
-                    //     "--network",
-                    //     "development"
-                    // )
+                    vscode.window.showInformationMessage(
+                        `Contract deployed to "${
+                            ["customDevelopment", "development"].includes(network_name) ? "local node" : network_name
+                        }" successfully`
+                    )
                 } catch (err) {
                     const msg = `Deployment to ${network_name} failed`
                     Output.output_line("VeTools", msg)
                     throw err
+                } finally {
+                    fs.writeFileSync(hardhatConfigPath, oldHardhatContents)
                 }
             })
         }
     }
 
-    export async function get_private_key_from_mnemonic() {
-        const mnemonic_items: IExtendedQuickPickItem[] = MnemonicRepository.getExistedMnemonicPaths().map(
-            (mnemonic_path) => {
-                const saved_mnemonic = MnemonicRepository.get_mnemonic(mnemonic_path)
-                return {
-                    detail: mnemonic_path,
-                    extended: saved_mnemonic,
-                    label: MnemonicRepository.MaskMnemonic(saved_mnemonic),
-                }
-            }
-        )
+    async function fundUserWallet(selectedWalletPrivateKey: string) {
+        const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545")
+        const selectedWallet = new Wallet(selectedWalletPrivateKey)
+        const funderWallet = new Wallet(
+            "0x7b3ed15194f5d748fed8a692f0256e486f95fb376e86299db6d75bd6400f2248" // 0x401EE82A841dc6B56DAe765bBBF3456Ea79F3B56
+        ).connect(provider)
 
-        if (mnemonic_items.length === 0) {
-            window.showErrorMessage(Constants.errorMessageStrings.ThereAreNoMnemonics)
-            return
-        }
-
-        const mnemonic_item = await showQuickPick(mnemonic_items, {
-            placeHolder: Constants.placeholders.selectMnemonicExtractKey,
-            ignoreFocusOut: true,
+        const tx = await funderWallet.sendTransaction({
+            to: selectedWallet.address,
+            value: ethers.parseEther("1"),
         })
-
-        const mnemonic = mnemonic_item.extended
-        if (!mnemonic) {
-            window.showErrorMessage(Constants.errorMessageStrings.MnemonicFileHaveNoText)
-            return
-        }
-
-        try {
-            const buffer = await mnemonicToSeed(mnemonic)
-            const key = hdkey.fromMasterSeed(buffer)
-            const childKey = key.derive("m/44'/60'/0'/0/0")
-            const privateKey = childKey.privateKey.toString("hex")
-            await vscodeEnvironment.writeToClipboard(privateKey)
-            window.showInformationMessage(Constants.informationMessage.privateKeyWasCopiedToClipboard)
-        } catch (error) {
-            window.showErrorMessage(Constants.errorMessageStrings.InvalidMnemonic)
-        }
+        const receipt = await tx.wait()
+        console.debug("Transaction receipt:", receipt)
     }
 }
