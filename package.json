@@ -41,6 +41,7 @@
         "onCommand:vetools.deployContracts",
         "onCommand:vetools.startLocalNode",
         "onCommand:vetools.startLocalNode",
+        "onCommand:vetools.createWallet",
         "onCommand:vetools.debug",
         "onCommand:vetools.debugWorkspaceFolder",
         "onCommand:vetools.getProviderUrl",
@@ -71,6 +72,10 @@
             {
                 "command": "vetools.stopLocalNode",
                 "title": "VeTools: Stop Local Node"
+            },
+            {
+                "command": "vetools.createWallet",
+                "title": "VeTools: Create Wallet"
             }
         ],
         "breakpoints": [
@@ -190,6 +195,7 @@
         "@types/vscode": "1.39.0",
         "copyfiles": "^2.4.1",
         "glob": "^7.1.4",
+        "prettier": "^2.8.4",
         "sinon": "^7.3.2",
         "ts-loader": "7.0.2",
         "tsc-watch": "^4.5.0",
@@ -198,7 +204,6 @@
         "vscode-debugprotocol": "^1.33.0",
         "webpack": "5.64.4",
         "webpack-cli": "^4.9.2",
-        "prettier": "^2.8.4",
         "webpack-merge": "^5.8.0"
     },
     "dependencies": {
@@ -210,7 +215,9 @@
         "acorn-walk": "^6.1.1",
         "astring": "^1.7.5",
         "bip39": "^3.0.1",
+        "crypto": "^1.0.1",
         "download": "^7.1.0",
+        "ethers": "^6.13.1",
         "fs-extra": "^7.0.1",
         "hdkey": "^1.1.1",
         "ms-rest": "^2.5.0",

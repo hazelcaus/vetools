@@ -1,12 +1,5 @@
 import { commands, ExtensionContext, window } from "vscode"
-import {
-    DebuggerCommands,
-    GanacheCommands,
-    ProjectCommands,
-    sdkCoreCommands,
-    HardhatCommands,
-    statusBarCommands,
-} from "./commands"
+import { DebuggerCommands, GanacheCommands, ProjectCommands, sdkCoreCommands, statusBarCommands } from "./commands"
 import { CommandContext, isWorkspaceOpen, required, setCommandContext } from "./helpers"
 import { GanacheService, MnemonicRepository, TreeService } from "./services"
 import { Constants } from "./Constants"

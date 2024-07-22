@@ -90,7 +90,7 @@ export namespace GanacheService {
         return ganache_process
     }
 
-    async function stopGanacheProcess(ganache_process: IGanacheProcess, kill_out_of_band: boolean) {
+    async function stopGanacheProcess(ganache_process: IGanacheProcess, kill_out_of_band: boolean): Promise<void> {
         if (!ganache_process) return
 
         const { output, pid, port, process } = ganache_process

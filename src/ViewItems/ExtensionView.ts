@@ -21,7 +21,7 @@ export abstract class ExtensionView<T extends IExtensionItem> implements IExtens
         return this.parent
     }
 
-    public setParent(element?: IExtensionView) | void {
+    public setParent(element?: IExtensionView) {
         this.parent = element
     }
 }
