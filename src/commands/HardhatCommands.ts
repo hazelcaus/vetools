@@ -1,26 +1,16 @@
 import * as vscode from "vscode"
 import * as fs from "fs-extra"
-import { exec } from "child_process"
-import { mnemonicToSeed } from "bip39"
-// @ts-ignore
-import hdkey from "hdkey"
 import path from "path"
-import { QuickPickItem, Uri, window, workspace } from "vscode"
-import { Constants, RequiredApps } from "../Constants"
-import { getWorkspaceRoot, outputCommandHelper, required, vscodeEnvironment } from "../helpers"
+import { Constants } from "../Constants"
+import { getWorkspaceRoot, outputCommandHelper, required } from "../helpers"
 import { showIgnorableNotification, showQuickPick } from "../utils/utils"
 import { Output } from "../Output"
-import { MnemonicRepository } from "../services"
 
 import { statusBarCommands } from "./StatusBarCommands"
 import { getNodeStatus } from "../statusBar/nodeStatus"
 import { ProjectCommands } from "./ProjectCommands"
 import IoHelpers from "../utils/ioHelpers"
 import { ethers, Wallet } from "ethers"
-
-interface IExtendedQuickPickItem extends QuickPickItem {
-    extended: string
-}
 
 export namespace HardhatCommands {
     export async function buildContracts() {
@@ -146,7 +136,7 @@ export namespace HardhatCommands {
         if (network_name === "development") {
             const nodeStatus = getNodeStatus()
 
-            console.log("LOCAL NODE RUNNING?", nodeStatus.text)
+            // console.log("LOCAL NODE RUNNING?", nodeStatus.text)
 
             const isLocalNodeRunning = nodeStatus.text.includes("running")
             if (!isLocalNodeRunning) {

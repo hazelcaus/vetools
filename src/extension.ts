@@ -43,6 +43,9 @@ export async function activate(context: ExtensionContext) {
     const createWallet = commands.registerCommand("vetools.createWallet", async () => {
         await tryExecute(() => ProjectCommands.createWallet())
     })
+    const transferAssets = commands.registerCommand("vetools.transferAssets", async () => {
+        await tryExecute(() => ProjectCommands.transferAssets())
+    })
     const get_debug_workspace_folder = commands.registerCommand("vetools.debugWorkspaceFolder", () => {
         return Constants.truffle_temp_dir
     })
@@ -64,6 +67,7 @@ export async function activate(context: ExtensionContext) {
             startLocalNode,
             stopLocalNode,
             createWallet,
+            transferAssets,
             start_debugger,
             get_debug_workspace_folder,
             get_provider_url,

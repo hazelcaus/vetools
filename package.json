@@ -42,6 +42,7 @@
         "onCommand:vetools.startLocalNode",
         "onCommand:vetools.startLocalNode",
         "onCommand:vetools.createWallet",
+        "onCommand:vetools.transferAssets",
         "onCommand:vetools.debug",
         "onCommand:vetools.debugWorkspaceFolder",
         "onCommand:vetools.getProviderUrl",
@@ -76,6 +77,10 @@
             {
                 "command": "vetools.createWallet",
                 "title": "VeTools: Create Wallet"
+            },
+            {
+                "command": "vetools.transferAssets",
+                "title": "VeTools: Transfer Assets"
             }
         ],
         "breakpoints": [

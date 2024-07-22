@@ -5,10 +5,13 @@ import { Uri, workspace } from "vscode"
 import * as vscode from "vscode"
 import { Constants } from "../Constants"
 import { required, outputCommandHelper, getWorkspaceRoot } from "../helpers"
-import { copy_folders, showIgnorableNotification, showOpenFolderDialog } from "../utils/utils"
+import { copy_folders, showIgnorableNotification, showOpenFolderDialog, showQuickPick } from "../utils/utils"
 import IoHelpers from "../utils/ioHelpers"
 import posixPath from "../utils/posixPath"
-import { Wallet } from "ethers"
+import { ethers, Wallet } from "ethers"
+import { Output } from "../Output"
+import { statusBarCommands } from "./StatusBarCommands"
+import { getNodeStatus } from "../statusBar/nodeStatus"
 
 export type WalletJson = {
     name: string
@@ -16,6 +19,12 @@ export type WalletJson = {
     publicKey: string
     encryptedPrivateKey: string
 }
+
+const RPC_MAP = {
+    local: "http://127.0.0.1:8545",
+    testnet: "https://sync-testnet.vechain.org",
+    mainnet: "https://sync-mainnet.vechain.org",
+} as Record<string, string>
 
 export namespace ProjectCommands {
     export async function newProject() {
@@ -27,8 +36,8 @@ export namespace ProjectCommands {
     }
 
     export async function createWallet() {
-        const rootFolder = getWorkspaceRoot()
-        if (!rootFolder) {
+        const workspaceRoot = getWorkspaceRoot()
+        if (!workspaceRoot) {
             await vscode.window.showErrorMessage(
                 "Please open a folder in your Visual Studio Code workspace before creating a wallet"
             )
@@ -46,7 +55,7 @@ export namespace ProjectCommands {
         }
 
         // create `wallets` folder
-        const walletFilesFolder = posixPath(rootFolder, "wallets")
+        const walletFilesFolder = posixPath(workspaceRoot, "wallets")
         try {
             await fs.promises.mkdir(walletFilesFolder)
         } catch {}
@@ -90,16 +99,173 @@ export namespace ProjectCommands {
         await vscode.commands.executeCommand("vscode.open", vscode.Uri.file(filename))
     }
 
-    export async function findLocalWallets() {
-        const rootFolder = getWorkspaceRoot()
-        if (!rootFolder) {
+    export async function transferAssets() {
+        const workspaceRoot = getWorkspaceRoot()
+        if (!workspaceRoot) {
             await vscode.window.showErrorMessage(
                 "Please open a folder in your Visual Studio Code workspace before creating a wallet"
             )
             return
         }
 
-        const walletFilesFolder = posixPath(rootFolder, "wallets")
+        // get wallets
+        const localWallets = await findLocalWallets()
+        console.debug("Local wallets found:", localWallets)
+        Output.output_line("VeTools", "Local wallets found: " + JSON.stringify(localWallets))
+
+        const _wallets = localWallets?.map((wallet) => {
+            return {
+                label: wallet.name,
+                description: wallet.address,
+                wallet,
+            }
+        })
+        if (!_wallets || _wallets.length === 0) {
+            await vscode.window.showErrorMessage(
+                "No wallets found. Please create a wallet first (use VeTools > Create Wallet)"
+            )
+            return
+        }
+        if (_wallets.length === 1) {
+            await vscode.window.showErrorMessage(
+                "Only one wallet created; please create another wallet to transfer assets"
+            )
+            return
+        }
+
+        // Choose network first to be able to query wallet balances
+        const destinations = [
+            {
+                cwd: workspaceRoot,
+                label: "$(plus) Local Node (experimental)",
+                networkId: "local",
+            },
+            {
+                cwd: workspaceRoot,
+                description: "Transfer on the Vechain Testnet",
+                label: "Vechain Testnet",
+                networkId: "testnet",
+            },
+            {
+                cwd: workspaceRoot,
+                description: "Experimental. Use at your own risk.",
+                label: "Vechain Mainnet",
+                networkId: "mainnet",
+            },
+        ]
+
+        const network = await showQuickPick(destinations, {
+            ignoreFocusOut: true,
+            placeHolder: "Choose network",
+        })
+
+        const provider = new ethers.JsonRpcProvider(RPC_MAP[network.networkId])
+
+        if (network.networkId === "local") {
+            const nodeStatus = getNodeStatus()
+
+            // console.log("LOCAL NODE RUNNING?", nodeStatus.text)
+
+            const isLocalNodeRunning = nodeStatus.text.includes("running")
+            if (!isLocalNodeRunning) {
+                console.log("Starting local node...")
+                await statusBarCommands.startLocalNode()
+                await new Promise((resolve) => setTimeout(resolve, 2500))
+            }
+
+            await showIgnorableNotification("Funding wallets", async () => {
+                for (const wallet of _wallets) {
+                    const bal = await provider.getBalance(wallet.wallet.address)
+                    if (bal.toString() === "0") {
+                        await fundUserWallet(wallet.wallet.address, "5")
+                    }
+                }
+            })
+        }
+
+        let wallets = [] as { label: string; description: string; wallet: WalletJson; balance: string }[]
+        for (const wallet of _wallets) {
+            const balance = await provider.getBalance(wallet.wallet.address)
+            wallets.push({
+                ...wallet,
+                description: `${ethers.formatEther(balance.toString())} ETH`,
+                balance: balance.toString(),
+            })
+        }
+
+        const fromWallet = (await showQuickPick(wallets, {
+            ignoreFocusOut: true,
+            placeHolder: "Choose wallet to send assets FROM",
+        })) as any
+        Output.output_line(
+            "VeTools",
+            "From wallet balance: " + fromWallet.balance + ethers.formatEther(fromWallet.balance!)
+        )
+        const fromWalletBalance = parseFloat(ethers.formatEther(fromWallet.balance!))
+        const toWallet = await showQuickPick(
+            wallets.filter((wallet: any) => wallet.label !== fromWallet.label),
+            {
+                ignoreFocusOut: true,
+                placeHolder: "Choose wallet to send assets TO",
+            }
+        )
+        const amount = await IoHelpers.enterNumber("Enter amount to transfer")
+        if (!amount || amount > fromWalletBalance) {
+            await vscode.window.showErrorMessage("Invalid amount (or insufficient balance)")
+            return
+        }
+
+        // prompt for password
+        const enteredPassword = await IoHelpers.enterPassword(`Enter the password for the wallet: ${fromWallet.label}`)
+        Output.output_line("VeTools", "Entered password: " + enteredPassword)
+
+        if (enteredPassword === undefined) {
+            await vscode.window.showErrorMessage("No password entered. Please enter a password to unlock the wallet")
+            return
+        }
+
+        const decryptedPrivateKey = ProjectCommands.xorDecrypt(fromWallet.wallet.encryptedPrivateKey, enteredPassword)
+
+        if (!decryptedPrivateKey || !decryptedPrivateKey.startsWith("0x")) {
+            await vscode.window.showErrorMessage("Incorrect password to unlock wallet")
+            return
+        }
+        const fromWalletEthers = new Wallet(decryptedPrivateKey, provider)
+
+        await showIgnorableNotification("Transferring assets", async () => {
+            const tx = await fromWalletEthers.sendTransaction({
+                to: toWallet.wallet.address,
+                value: ethers.parseEther(amount.toString()),
+            })
+            const receipt = await tx.wait()
+            console.debug("Transaction receipt:", receipt)
+        })
+    }
+
+    async function fundUserWallet(address: string, amountInEth: string = "1") {
+        const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545")
+        const funderWallet = new Wallet(
+            "0x7b3ed15194f5d748fed8a692f0256e486f95fb376e86299db6d75bd6400f2248" // 0x401EE82A841dc6B56DAe765bBBF3456Ea79F3B56
+        ).connect(provider)
+
+        const tx = await funderWallet.sendTransaction({
+            to: address,
+            value: ethers.parseEther(amountInEth),
+        })
+        const receipt = await tx.wait()
+        console.debug("Transaction receipt:", receipt)
+    }
+
+    export async function findLocalWallets() {
+        const workspaceRoot = getWorkspaceRoot()
+        if (!workspaceRoot) {
+            await vscode.window.showErrorMessage(
+                "Please open a folder in your Visual Studio Code workspace before creating a wallet"
+            )
+            return
+        }
+
+        const walletFilesFolder = posixPath(workspaceRoot, "wallets")
 
         return fs.readdirSync(walletFilesFolder).map((filename) => {
             const walletJson = fs.readFileSync(posixPath(walletFilesFolder, filename), "utf-8")
