@@ -42,7 +42,7 @@ To follow:
 
 Following this directory structure, you can compile your smart contract(s) with ease.
 
-![alt text](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/one.gif "2. Compile your contracts")
+![alt text](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-compile-contracts.mov "2. Compile your contracts")
 
 To follow:
 
