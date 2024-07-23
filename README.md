@@ -30,7 +30,7 @@
 
 Similar to [create-react-app](https://create-react-app.dev/) for React, this feature offers a familiar playing ground for users familiar with Ethereum and EVM-based blockchains. This effectively creates a project structure to allow users to develop smart contracts, aid in the compilation and deployment of these contracts, and allow a seamless debugging experience.
 
-![alt text](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/one.gif "1. Create a new project")
+![1. Create a new project](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/one.gif)
 
 To follow:
 
@@ -42,7 +42,7 @@ To follow:
 
 Following this directory structure, you can compile your smart contract(s) with ease.
 
-![alt text](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-compile-contracts.gif "2. Compile your contracts")
+![2. Compile your contracts](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-compile-contracts.gif)
 
 To follow:
 
@@ -58,6 +58,8 @@ simply right-click on a Solidity (`.sol`) file and click `Compile Contracts`.
 
 Create a local, temporary wallet for you to use
 
+![3. Create a Wallet](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-create-wallet.gif)
+
 To follow:
 
 1. `Ctrl/Cmd + Shift + P` to open VSCode's Command Palette
@@ -65,9 +67,11 @@ To follow:
 3. Enter a name & password for your wallet (the password encrypts your private key)
 4. Your _encrypted_ wallet is stored within the `wallets` folder of your current directory
 
-## 3. Start/Stop Local Blockchain node
+## 4. Start/Stop Local Blockchain node
 
 Manage local blockchain instances for testing!
+
+![4. Start/Stop Local Blockchain node](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-stop-start-local-node.gif)
 
 To follow:
 
@@ -76,9 +80,11 @@ To follow:
 3. A local blockchain node is spun up!
 4. To close: type `VeTools: Stop Local Node`. You can also click the `local node running` tab on the bottom-left of your VSCode window
 
-## 4. Deploy your Smart Contracts
+## 5. Deploy your Smart Contracts
 
 Deploy your smart contract(s) with ease using the created wallets above
+
+![5. Deploy your Smart Contracts](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-deploy-contracts.gif)
 
 To follow:
 
@@ -91,9 +97,11 @@ To follow:
 
 Pro tip: if you're deploying to a local node, we automatically fund your address with some ETH for you to be able to deploy the contract
 
-## 5. Transfer Assets
+## 6. Transfer Assets
 
 You can very quickly transfer assets between your created wallets (requirement: you must have at least two created wallets prior to executing this operation).
+
+![6. Transfer Assets](https://raw.githubusercontent.com/hazelcaus/vetools/dev/demo/vetools-transfer-assets.gif)
 
 To follow:
 
@@ -101,7 +109,7 @@ To follow:
 2. Type: `VeTools: Transfer Assets`
 3. Choose the network you'd like to execute the transfer operations on (this helps us query balances easily)
 4. Select the wallet you'd like to send assets _from_
-5. Select the wallet you'd like to send assets to\_
+5. Select the wallet you'd like to send assets _to_
 6. Enter the amount of assets you'd like to send
 7. Enter the password of the _from_ wallet to decrypt it
 8. Wait a while, and you'll get a confirmation when your assets are transferred. Ezpz
