@@ -233,12 +233,19 @@ export namespace ProjectCommands {
         const fromWalletEthers = new Wallet(decryptedPrivateKey, provider)
 
         await showIgnorableNotification("Transferring assets", async () => {
-            const tx = await fromWalletEthers.sendTransaction({
-                to: toWallet.wallet.address,
-                value: ethers.parseEther(amount.toString()),
-            })
-            const receipt = await tx.wait()
-            console.debug("Transaction receipt:", receipt)
+            try {
+                const tx = await fromWalletEthers.sendTransaction({
+                    to: toWallet.wallet.address,
+                    value: ethers.parseEther(amount.toString()),
+                })
+                const receipt = await tx.wait()
+                console.debug("Transaction receipt:", receipt)
+
+                vscode.window.showInformationMessage(`${amount} ETH transferred to wallet ${toWallet.label}`)
+            } catch (err: any) {
+                console.error("Failed to transfer assets", err.message)
+                await vscode.window.showErrorMessage("Failed to transfer assets: " + err.message)
+            }
         })
     }
 
