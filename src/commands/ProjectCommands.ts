@@ -329,7 +329,7 @@ async function createProject(project_path: string) {
             Output.output_line("vetools", `Copying from "${from}"`)
             copy_folders(from, project_path)
 
-            await vscode.commands.executeCommand('vscode.openFolder', Uri.file(project_path), true)
+            await vscode.commands.executeCommand("vscode.openFolder", Uri.file(project_path), true)
         } catch (error) {
             fs.emptyDirSync(project_path)
             throw new Error(`Could not create project. 'createProject' failed: ${(error as Error).message}`)
@@ -339,10 +339,10 @@ async function createProject(project_path: string) {
     await showIgnorableNotification("Installing dependencies", async () => {
         try {
             // npm install
-            await outputCommandHelper.execute(project_path, "npm", "install -f")
+            await outputCommandHelper.execute(project_path, "yarn install")
         } catch (err) {
             throw new Error(
-                `Failed to set up dependencies. Do you have npm configured correctly? ${(err as Error).message}`
+                `Failed to set up dependencies. Do you have yarn configured correctly? Error: ${(err as Error).message}`
             )
         }
     })

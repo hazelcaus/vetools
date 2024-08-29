@@ -20,7 +20,8 @@
     ],
     "scripts": {
         "package": "vsce package",
-        "publish": "vsce publish",
+        "vscode:publish": "vsce publish",
+        "vscode:login": "vsce login magnusekstrom",
         "vscode:prepublish": "yarn webpack:prod",
         "compile": "npm cache clean -f && yarn clean && tsc -p ./",
         "compile:webpack": "yarn clean && tsc -p ./ && yarn webpack:dev",

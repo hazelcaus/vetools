@@ -7,8 +7,8 @@ pragma solidity ^0.8.4;
 // This is the main building block for smart contracts.
 contract Token {
     // Some string type variables to identify the token.
-    string public name = "My VeChain Token";
-    string public symbol = "MVT";
+    string public name = "My VeChain Asset Token";
+    string public symbol = "MVAT";
 
     // The fixed amount of tokens stored in an unsigned integer type variable.
     uint256 public totalSupply = 1000000;

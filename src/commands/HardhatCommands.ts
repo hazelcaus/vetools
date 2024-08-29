@@ -19,7 +19,7 @@ export namespace HardhatCommands {
         await showIgnorableNotification("Compiling Contracts", async () => {
             Output.output_line("vetools", `LMAO LMAO WORKSPACE ROOT: ${getWorkspaceRoot()}`)
             try {
-                await outputCommandHelper.execute(getWorkspaceRoot(), "npm", "run", "compile")
+                await outputCommandHelper.execute(getWorkspaceRoot(), "yarn", "compile")
             } catch (err) {
                 console.debug("Error:", (err as Error).toString())
             }

@@ -46,9 +46,9 @@ export namespace required {
                 throw new Error("You don't have node.js installed. Please install it before continuing")
             }
 
-            // if (!(await check_apps(RequiredApps.truffle))) {
-            //     await install_truffle()
-            // }
+            if (!(await check_apps(RequiredApps.yarn))) {
+                await install_yarn()
+            }
 
             if (!(await check_apps(RequiredApps.ganache))) {
                 await install_ganache()
@@ -73,6 +73,9 @@ export namespace required {
         if (apps.includes(RequiredApps.npm)) {
             currentState.npm = currentState.npm || (await create_version_object(RequiredApps.npm, get_npm_version))
         }
+        if (apps.includes(RequiredApps.yarn)) {
+            currentState.yarn = currentState.yarn || (await create_version_object(RequiredApps.yarn, get_yarn_version))
+        }
         if (apps.includes(RequiredApps.truffle)) {
             currentState.truffle =
                 currentState.truffle || (await create_version_object(RequiredApps.truffle, get_truffle_version))
@@ -91,6 +94,10 @@ export namespace required {
 
     export async function get_node_version(): Promise<string> {
         return await get_version(RequiredApps.node, "--version", /v(\d+.\d+.\d+)/)
+    }
+
+    export async function get_yarn_version(): Promise<string> {
+        return await get_version(RequiredApps.yarn, "--version", /(\d+.\d+.\d+)/)
     }
 
     export async function get_npm_version(): Promise<string> {
@@ -142,14 +149,14 @@ export namespace required {
         )
     }
 
-    export async function install_npm() {
+    export async function install_yarn() {
         try {
-            await install_via_npm(RequiredApps.npm, Constants.requiredVersions[RequiredApps.npm])
+            await install_via_npm(RequiredApps.yarn, Constants.requiredVersions[RequiredApps.yarn])
         } catch (error) {
             Output.output_line(Constants.outputChannel.requirements, (error as Error).message)
         }
 
-        currentState.npm = await create_version_object(RequiredApps.npm, get_npm_version)
+        currentState.yarn = await create_version_object(RequiredApps.yarn, get_yarn_version)
     }
 
     export async function install_truffle() {
@@ -206,7 +213,13 @@ export namespace required {
             throw new Error(Constants.errorMessageStrings.WorkspaceShouldBeOpened)
         }
 
-        await execute(workspaceRoot, "npm", "i", is_global ? "-g" : "", `${package_name}@"${versionString}"`)
+        await execute(
+            workspaceRoot,
+            "npm",
+            "i",
+            is_global ? "-g" : "",
+            `${package_name}${package_version ? "@" : ""}"${versionString}"`
+        )
     }
 
     async function get_version(program: string, command: string, matcher: RegExp): Promise<string> {

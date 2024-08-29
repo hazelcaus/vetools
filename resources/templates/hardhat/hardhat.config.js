@@ -1,4 +1,4 @@
-import "@nomiclabs/hardhat-ethers"
+require("@nomiclabs/hardhat-ethers")
 
 const VECHAIN_DEFAULT_MNEMONIC = "denial kitchen pet squirrel other broom bar gas better priority spoil cross"
 const VECHAIN_URL_SOLO = "http://127.0.0.1:8545"

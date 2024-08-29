@@ -4,9 +4,9 @@
     "description": "",
     "scripts": {
         "compile": "hardhat compile",
-        "deploy:dev": "hardhat run scripts/deploy.ts --network development",
-        "deploy:testnet": "hardhat run scripts/deploy.ts --network testnet",
-        "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
+        "deploy:dev": "hardhat run scripts/deploy.js --network development",
+        "deploy:testnet": "hardhat run scripts/deploy.js --network testnet",
+        "deploy:mainnet": "hardhat run scripts/deploy.js --network mainnet",
         "test": "hardhat test"
     },
     "dependencies": {

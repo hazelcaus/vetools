@@ -6,6 +6,7 @@ import { ExtensionContext, extensions } from "vscode"
 export enum RequiredApps {
     node = "node",
     npm = "npm",
+    yarn = "yarn",
     git = "git",
     python = "python",
     truffle = "truffle",
@@ -114,6 +115,10 @@ export class Constants {
         [RequiredApps.npm]: {
             max: "11.1.0",
             min: "6.14.15",
+        },
+        [RequiredApps.yarn]: {
+            max: "1.0.0",
+            min: "30.0.0",
         },
         [RequiredApps.truffle]: {
             max: "6.0.0",
