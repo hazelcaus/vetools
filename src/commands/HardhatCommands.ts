@@ -17,6 +17,7 @@ export namespace HardhatCommands {
         await required.installDependencies()
 
         await showIgnorableNotification("Compiling Contracts", async () => {
+            Output.output_line("vetools", `LMAO LMAO WORKSPACE ROOT: ${getWorkspaceRoot()}`)
             try {
                 await outputCommandHelper.execute(getWorkspaceRoot(), "npm", "run", "compile")
             } catch (err) {

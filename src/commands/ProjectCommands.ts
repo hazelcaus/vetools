@@ -326,13 +326,10 @@ async function createProject(project_path: string) {
     await showIgnorableNotification("Creating new VeTools project", async () => {
         try {
             const from = path.join(Constants.templates_directory, "hardhat")
+            Output.output_line("vetools", `Copying from "${from}"`)
             copy_folders(from, project_path)
 
-            console.debug("workspace.workspaceFolder:", workspace.workspaceFolders)
-            workspace.updateWorkspaceFolders(0, workspace.workspaceFolders ? workspace.workspaceFolders.length : null, {
-                uri: Uri.file(project_path),
-            })
-            console.debug("workspace.workspaceFolder:", workspace.workspaceFolders)
+            await vscode.commands.executeCommand('vscode.openFolder', Uri.file(project_path), true)
         } catch (error) {
             fs.emptyDirSync(project_path)
             throw new Error(`Could not create project. 'createProject' failed: ${(error as Error).message}`)
