@@ -194,7 +194,7 @@ config.networks = {
                         "npx",
                         "hardhat",
                         "run",
-                        "scripts/deploy.ts",
+                        "scripts/deploy.js",
                         "--network",
                         network_name
                     )
